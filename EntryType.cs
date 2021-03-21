@@ -47,7 +47,7 @@ namespace FileManager
                 }
                 else if (temp < Gbyte)
                 {
-                    Size = (Math.Round((float)temp / (float)Gbyte), 2).ToString() + " Mb";
+                    Size = (Math.Round((float)temp / (float)Gbyte), 2).ToString() + " Gb";
                 }
             }
             else if (Directory.Exists(path))
