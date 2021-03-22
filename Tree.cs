@@ -8,12 +8,11 @@ namespace FileManager
 {
     class Tree
     {
+        public string CurrentCatalog { get; set; }
+        public List<string> Roots { get; private set; }
         public List<string> Drives { get; }
-        public Tree()
-        {
-            Drives = GetRoots();
-        }
-        List<string> GetRoots()
+        public Tree() => SetRoots();
+        public void SetRoots()
         {
             List<string> Drives = new List<string>();
             for (char c = 'A'; c < 'Z'; c++)
@@ -23,7 +22,7 @@ namespace FileManager
                     Drives.Add(c.ToString() + ":\\");
                 }
             }
-            return Drives;
+            Roots = Drives;
         }
         public List<Entry> GetEntryList(string path)
         {
@@ -65,6 +64,6 @@ namespace FileManager
             }
             return result;
         }
-        
+
     }
 }

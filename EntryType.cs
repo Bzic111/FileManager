@@ -54,7 +54,7 @@ namespace FileManager
             else if (Directory.Exists(path))
             {
                 Extension = "Directory";
-                Size = " ";
+                Size = "".PadRight(12, ' ');
             }
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
         }
