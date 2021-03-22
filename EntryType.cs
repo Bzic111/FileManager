@@ -19,6 +19,7 @@ namespace FileManager
         public Type type;
         public string Extension;
         public string Size;
+        public string ShortInfo;
         public Entry()
         {
 
@@ -55,6 +56,7 @@ namespace FileManager
                 Extension = "Directory";
                 Size = " ";
             }
+            ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
         }
     }
 }

@@ -22,22 +22,34 @@ namespace FileManager
             string StepInCatalog = null;
 
             Tree MyTree = new Tree();
+            Comands Com = new Comands();
+
             string CurrentCatalog = MyTree.Drives[0];
             List<Entry> Entryes = MyTree.GetEntryList(CurrentCatalog);
 
             FrontView FW = new FrontView(42, 74, Entryes);
+            List<List<Entry>> Pages = FW.ToPages(Entryes);
 
-            string[] Table = FW.TableForScreen(Entryes, 0);
+            //for (int i = 0,counter=0; counter < Entryes.Count; i++)
+            //{
+            //    Pages.Add(new List<Entry>());
+            //    for (int j = 0; j < 40& counter < Entryes.Count; j++, counter++)
+            //    {
+            //        Pages[i].Add(Entryes[counter]);
+            //    }
+            //}
+
+            //string[] Table = FW.TableForScreen(Entryes, 0);
             //string[] Tree = FW.TreeForScreen(Entryes, 0);
 
-            string[] NewTable = FW.EntryesToArr(Entryes);
+            //string[] NewTable = FW.EntryesToArr(Entryes);
 
-            List<string[]> Pages = FW.ToPages(NewTable);
+            //List<string[]> Pages = FW.ToPages(NewTable);
             LastPage = Pages.Count-1;
 
             FW.ShowFrame();
-            FW.FillRightFrame(Pages[PageRight]);
-            FW.FillLeftFrame(Pages[PageLeft]);
+            //FW.FillRightFrame(Pages[PageRight]);
+            //FW.FillLeftFrame(Pages[PageLeft]);
 
             int CursorLeft = FW.LeftFrameCursorLeft;
             int CursorTop = FW.FrameTop;
@@ -47,52 +59,45 @@ namespace FileManager
             do
             {
                 FW.SetColor(FrontView.ColorsPreset.Normal);
-                FW.FillRightFrame(Pages[PageRight]);
-                FW.FillLeftFrame(Pages[PageLeft]);
+                Console.SetCursorPosition(CursorLeft, CursorTop);
+                FW.FillRightFrame(Pages[Page]);
+                FW.FillLeftFrame(Pages[Page]);
 
                 Console.SetCursorPosition(CursorLeft, CursorTop);
                 FW.SetColor(FrontView.ColorsPreset.Selected);
                 Console.Write(Entryes[index].Name);
 
+                FW.SetColor(FrontView.ColorsPreset.ContextNormal);
+                Console.SetCursorPosition(3, 0);
+                Console.Write($"Page = {Page}/{Pages.Count}, PageLeft = {PageLeft}/{Pages.Count}, PageRight = {PageRight}/{Pages.Count}");
+
                 FW.SetColor(FrontView.ColorsPreset.Normal);
-                ConsoleKey key = Console.ReadKey().Key;
-                switch (key)
+                //ConsoleKey key = Console.ReadKey().Key;
+                switch (Console.ReadKey().Key)
                 {
                     case ConsoleKey.UpArrow:
                         Console.SetCursorPosition(CursorLeft, CursorTop);
                         Console.Write(Entryes[index].Name);
-                        if (index > 0 & Page > 0)
+                        if (CursorTop > FW.FrameTop)
                         {
                             index--;
-                            CursorTop = FW.FrameHeight;
-                            Page--;
-                        }
-                        else if (index > 0 & Page == 0)
-                        {
                             CursorTop--;
-                            index--;
                         }
+                        Console.SetCursorPosition(CursorLeft, CursorTop);
                         break;
                     case ConsoleKey.DownArrow:
                         Console.SetCursorPosition(CursorLeft, CursorTop);
                         Console.Write(Entryes[index].Name);
-
-                        if (index < Pages[Page].Length - 1 & index < Entryes.Count)
+                        if (CursorTop - FW.FrameTop < Pages[Page].Count - 1 & index < Entryes.Count-1)
                         {
                             index++;
                             CursorTop++;
                         }
-                        else if (index == Pages[Page].Length - 1 & Page < Pages.Count - 1)
-                        {
-                            index++;
-                            Page++;
-                            CursorTop = FW.FrameTop;
-                        }
+                        Console.SetCursorPosition(CursorLeft, CursorTop);
                         break;
                     case ConsoleKey.LeftArrow:
                         Console.SetCursorPosition(CursorLeft, CursorTop);
                         Console.Write(Entryes[index].Name);
-
                         if (CursorLeft == FW.LeftFrameCursorLeft)
                         {
                             CursorLeft = FW.RightFrameCursorLeft;
@@ -105,11 +110,11 @@ namespace FileManager
                             PageRight = Page;
                             Page = PageLeft;
                         }
+                        Console.SetCursorPosition(CursorLeft, CursorTop);
                         break;
                     case ConsoleKey.RightArrow:
                         Console.SetCursorPosition(CursorLeft, CursorTop);
                         Console.Write(Entryes[index].Name);
-
                         if (CursorLeft == FW.RightFrameCursorLeft)
                         {
                             CursorLeft = FW.LeftFrameCursorLeft;
@@ -122,8 +127,8 @@ namespace FileManager
                             PageLeft = Page;
                             Page = PageRight;
                         }
+                        Console.SetCursorPosition(CursorLeft, CursorTop);
                         break;
-
                     case ConsoleKey.Enter:
                         if (Directory.Exists(Entryes[index].Path))
                         {
@@ -134,27 +139,26 @@ namespace FileManager
                             Page = 0;
                             PageLeft = 0;
                             PageRight = 0;
-                            NewTable = FW.EntryesToArr(Entryes);
-                            Pages = FW.ToPages(NewTable);
+                            //NewTable = FW.EntryesToArr(Entryes);
+                            Pages = FW.ToPages(Entryes);
                             LastPage = Pages.Count-1;
                             FW.FillRightFrame(Pages[PageRight]);
                             FW.FillLeftFrame(Pages[PageLeft]);
                         }
                         break;
                     case ConsoleKey.Backspace:
-                        string[] tempPath = CurrentCatalog.Split('\\');
-                        
+                        string[] tempPath = CurrentCatalog.Split('\\');                        
                         if (tempPath.Length>1)
                         {
                             for (int i = 0; i < tempPath.Length - 1; i++)
                             {
                                 if (i==0)
                                 {
-                                    CurrentCatalog = tempPath[i];
+                                    CurrentCatalog = tempPath[i]+ '\\';
                                 }
                                 else
                                 {
-                                CurrentCatalog += '\\'+tempPath[i];
+                                CurrentCatalog += tempPath[i]+ '\\';
 
                                 }
                             }
@@ -164,16 +168,25 @@ namespace FileManager
                             Page = 0;
                             PageLeft = 0;
                             PageRight = 0;
-                            NewTable = FW.EntryesToArr(Entryes);
-                            Pages = FW.ToPages(NewTable);
+                            //NewTable = FW.EntryesToArr(Entryes);
+                            Pages = FW.ToPages(Entryes);
                             LastPage = Pages.Count-1;
                             FW.FillRightFrame(Pages[PageRight]);
                             FW.FillLeftFrame(Pages[PageLeft]);
                         }
                         break;
                     case ConsoleKey.Applications:
+                        SelectorContext(Com,FW, CursorTop, CursorLeft, CurrentCatalog);
+                        if (CursorLeft == FW.LeftFrameCursorLeft)
+                        {
+                            FW.FillLeftFrame(Pages[Page]);
+                        }
+                        else if (CursorLeft == FW.RightFrameCursorLeft)
+                        {
+                            FW.FillRightFrame(Pages[Page]);
+                        }
+
                         //ShowContext(Com.AllComands, index, CursorLeft);
-                        //SelectorContext(index, CursorLeft,);
                         break;
 
 
@@ -187,20 +200,39 @@ namespace FileManager
 
 
                     case ConsoleKey.PageUp:
-                        if (Page > 0)
+                        if (CursorLeft == FW.LeftFrameCursorLeft & Page >0)
                         {
                             Page--;
+                            PageLeft = Page;
                             index = Page * 40;
+                            FW.FillLeftFrame(Pages[PageLeft]);
                         }
+                        else if (CursorLeft == FW.RightFrameCursorLeft & Page >0)
+                        {
+                            Page--;
+                            PageRight = Page;
+                            index = Page * 40;
+                            FW.FillRightFrame(Pages[PageRight]);
+                        }
+                        CursorTop = FW.FrameTop;
                         break;
                     case ConsoleKey.PageDown:
-                        if (Page < LastPage)
+                        if (CursorLeft == FW.LeftFrameCursorLeft & Page < LastPage)
                         {
                             Page++;
-                            index = Page*40;
+                            PageLeft = Page;
+                            index = Page * 40;
+                            FW.FillLeftFrame(Pages[PageLeft]);
                         }
+                        else if(CursorLeft == FW.RightFrameCursorLeft & Page < LastPage) 
+                        {
+                            Page++;
+                            PageRight = Page;
+                            index = Page * 40;
+                            FW.FillRightFrame(Pages[PageRight]);
+                        }
+                        CursorTop = FW.FrameTop;
                         break;
-
                     case ConsoleKey.F1:
                         break;
                     case ConsoleKey.F2:
@@ -214,6 +246,90 @@ namespace FileManager
                         break;
                 }
             } while (Cycle);
+        }
+
+        static public void SelectorContext(Comands Com, FrontView FW, int top, int left, string path)
+        {
+            int index = 0;
+            int currentTop;
+            if (top > 40 - Com.AllComands.Count)
+            {
+                currentTop = top - Com.AllComands.Count;
+            }
+            else
+            {
+                currentTop = top +1;
+            }
+            int currentLeft = left+10;
+            bool cycle = true;
+            string[] keys = new string[Com.AllComands.Count];
+            Com.AllComands.Keys.CopyTo(keys, 0);
+
+            ShowContext(Com.AllComands,FW, currentTop, currentLeft);
+            FW.SetColor(FrontView.ColorsPreset.ContextNormal);
+            do
+            {
+                Console.SetCursorPosition(currentLeft, currentTop);
+                FW.SetColor(FrontView.ColorsPreset.ContextSelected);
+                Console.Write(keys[index]);
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.Enter:
+                        Com.AllComands.GetValueOrDefault(keys[index])(path);
+                        cycle = false;
+                        break;
+                    case ConsoleKey.Escape:
+                        cycle = false;
+                        break;
+                    case ConsoleKey.UpArrow:
+                        FW.SetColor(FrontView.ColorsPreset.ContextNormal);
+                        Console.SetCursorPosition(currentLeft, currentTop);
+                        Console.Write(keys[index]);
+                        if (index > 0)
+                        {
+                            index--;
+                            currentTop--;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        FW.SetColor(FrontView.ColorsPreset.ContextNormal);
+                        Console.SetCursorPosition(currentLeft, currentTop);
+                        Console.Write(keys[index]);
+                        if (index < Com.AllComands.Count-1)
+                        {
+                            index++;
+                            currentTop++;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } while (cycle);
+            FW.SetColor(FrontView.ColorsPreset.Normal);
+        }
+        static public void ShowContext(Dictionary<string, Comands.Comand> Cmds,FrontView FW, int top, int left)
+        {
+
+            int currentLeft = left;
+            int currentTop;// = top + 2;
+            string[] keys = new string[Cmds.Count];
+            Cmds.Keys.CopyTo(keys, 0);
+            if (top > 40 - Cmds.Count)
+            {
+                currentTop = top - Cmds.Count;
+            }
+            else
+            {
+                currentTop = top;
+            }
+            for (int i = 0; i < Cmds.Count; i++)
+            {
+                FW.SetColor(FrontView.ColorsPreset.ContextNormal);
+                Console.SetCursorPosition(currentLeft, currentTop + i);
+                Console.Write(keys[i]);
+            }
+            FW.SetColor(FrontView.ColorsPreset.Normal);
+            Console.SetCursorPosition(currentLeft, currentTop);
         }
     }
 }

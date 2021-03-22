@@ -173,21 +173,37 @@ namespace FileManager
         {
             Console.Write(path.PadRight(FrameWidth,' ').Remove(FrameWidth-1));
         }
-        public void FillLeftFrame(string[] filler)
+        public void FillLeftFrame(List<Entry> filler)
         {
             
-            for (int i = 0; i < filler.Length; i++)
+            for (int i = 0; i < filler.Count; i++)
             {
                 Console.SetCursorPosition(LeftFrameCursorLeft, FrameTop + i);
-                Console.Write(filler[i]);
+                Console.Write(filler[i].ShortInfo);
+            }
+            if (filler.Count < 40)
+            {
+                for (int i = filler.Count; i < 41; i++)
+                {
+                    Console.SetCursorPosition(LeftFrameCursorLeft, FrameTop + i);
+                    Console.Write("".PadRight(72,' '));
+                }
             }
         }
-        public void FillRightFrame(string[] filler)
+        public void FillRightFrame(List<Entry> filler)
         {
-            for (int i = 0; i < filler.Length; i++)
+            for (int i = 0; i < filler.Count; i++)
             {
                 Console.SetCursorPosition(RightFrameCursorLeft, FrameTop + i);
-                Console.Write(filler[i]);
+                Console.Write(filler[i].ShortInfo);
+            }
+            if (filler.Count < 40)
+            {
+                for (int i = filler.Count; i < 40; i++)
+                {
+                    Console.SetCursorPosition(RightFrameCursorLeft, FrameTop + i);
+                    Console.Write("".PadRight(72, ' '));
+                }
             }
         }
         public string[] EntryesToArr(List<Entry> lst, int StartIndex=0)
@@ -245,47 +261,18 @@ namespace FileManager
                 return null;
             }
         }
-        public List<string[]> ToPages(string[] arr)
+        public List<List<Entry>> ToPages(List<Entry> Entryes)
         {
-            int counter = 0;
-            List<string[]> result = new List<string[]>();
-            if (arr.Length == 40)
+            List<List<Entry>> Pages = new List<List<Entry>>();
+            for (int i = 0, counter = 0; counter < Entryes.Count; i++)
             {
-                result.Add(new string[40]);
-                for (int i = 0; i < arr.Length; i++)
+                    Pages.Add(new List<Entry>());                    
+                for (int j = 0; j < 40& counter < Entryes.Count; j++, counter++)
                 {
-                    result[^1] = arr;
+                    Pages[i].Add(Entryes[counter]);
                 }
             }
-            else if (arr.Length > 40)
-            {
-                for (int i = 0; i <= (arr.Length / 40) + 1; i++)
-                {
-                    if (i == (arr.Length / 40) + 1)
-                    {
-                        result.Add(new string[arr.Length % 40]);
-                    }
-                    else
-                    {
-                        result.Add(new string[40]);
-                    }
-                    for (int j = 0; j < result[^1].Length & counter < arr.Length; j++)
-                    {
-                        result[^1][j] = arr[counter];
-                        counter++;
-                    }
-                }
-            }
-            else if (arr.Length < 40)
-            {
-                result.Add(new string[arr.Length % 40]);
-                for (int j = 0; j < result[^1].Length & counter < arr.Length; j++)
-                {
-                    result[^1][j] = arr[counter];
-                    counter++;
-                }
-            }
-            return result;
+            return Pages;
         }
         public string[] TableForScreen(List<Entry> lst, int StartIndex)
         {
