@@ -7,13 +7,16 @@ namespace FileManager
 {
     class Entry
     {
+        public enum Type
+        {
+            File,
+            Directory
+        }
+
         private int Kbyte = 1024;
         private double Mbyte = Math.Pow(1024, 2);
         private double Gbyte = Math.Pow(1024, 3);
-        public enum Type
-        {
-            File, Directory
-        }
+
         public string Name;
         public string Path;
         public Type type;
@@ -22,6 +25,10 @@ namespace FileManager
         public string ShortInfo;
         public string FullInfo;
         public string LastWrite;
+        public bool Visible = false;
+
+        public List<Entry> Catalog;
+
         public Entry()
         {
 
@@ -56,7 +63,7 @@ namespace FileManager
                     Size = (Math.Round((float)temp / (float)Gbyte), 2).ToString() + " Gb";
                 }
             }
-            else if (Directory.Exists(path))
+            else if (type == Type.Directory)
             {
                 LastWrite = Directory.GetLastWriteTime(path).ToString();
                 Extension = "Directory";
@@ -65,5 +72,7 @@ namespace FileManager
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
 
         }
+        void GetName() => Console.Write(Name);
+        string GetPath() => Path;
     }
 }

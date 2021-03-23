@@ -23,38 +23,56 @@ namespace FileManager
 
             Tree MyTree = new Tree();
             Comands Com = new Comands();
-            Frame fr = new Frame(42, 74);
+            Frame fr = new Frame(0, 0, 42, 74);
+
+            fr.Coloring(Frame.Colorscheme.Default);
 
 
-            MyTree.CurrentCatalog = MyTree.Roots[0];
+            List<Entry> entr = new List<Entry>();
+            MyTree.SetRoots();
+            int rootIndex = 0;
+            Console.ResetColor();
+            fr.Show();
+            foreach (var item in MyTree.Roots)
+            {
+                fr.SetColor(Frame.ColorsPreset.Normal);
+                fr.WriteText(item, 0, rootIndex);
+                rootIndex++;
+            }
+            rootIndex = 0;
+            do
+            {
+                fr.SetColor(Frame.ColorsPreset.Selected);
+                fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.Enter:
+                        entr = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
+                        Cycle = false;
+                        break;
+                    case ConsoleKey.UpArrow:
+                        fr.SetColor(Frame.ColorsPreset.Normal);
+                        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+                        if (rootIndex > 0)
+                        {
+                            rootIndex--;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        fr.SetColor(Frame.ColorsPreset.Normal);
+                        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+                        if (rootIndex < MyTree.Roots.Count-1)
+                        {
+                            rootIndex++;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } while (Cycle);
 
-            List<Entry> Entryes = MyTree.GetEntryList(MyTree.CurrentCatalog);
 
-            FrontView FW = new FrontView(42, 74, Entryes);
-            UserControl control = new UserControl(FW, MyTree, fr);
-
-
-            List<List<Entry>> Pages = FW.ToPages(Entryes);
-
-            LastPage = Pages.Count - 1;
-
-            //fr.ShowTwo(43, 74, true);
-            fr.ShowOne(43, 74, true);
-            FW.FillFrame(Pages[Page]);
-            //FW.ShowFrame();
-            //FW.FillRightFrame(Pages[PageRight]);
-            //FW.FillLeftFrame(Pages[PageLeft]);
-
-            int CursorLeft = FW.LeftFrameCursorLeft;
-            int CursorTop = FW.FrameTop;
-            Console.SetCursorPosition(CursorLeft, CursorTop);
-            Console.CursorVisible = false;
-
-            control.OneTab(Pages, Entryes, CursorLeft, CursorTop);
         }
-        static void ChoseDrive(Frame fr)
-        {
-            
-        }
+
     }
 }

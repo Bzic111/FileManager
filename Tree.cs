@@ -41,11 +41,23 @@ namespace FileManager
             }
             return entryes;
         }
-        public string[] ToArray()
+        public void ToArray(List<Entry> entryes)
         {
+            StringBuilder sb = new StringBuilder();
 
+            for (int i = 0; i < entryes.Count; i++)
+            {
+                if (entryes[i].type == Entry.Type.Directory)
+                {
+                    sb.Append($"╚╦{entryes[i].Name}".PadRight(Console.WindowWidth, ' ').Remove(Console.WindowWidth - 5));
+                }
+                else if (entryes[i].type == Entry.Type.File)
+                {
+                    sb.Append($" ╟─{entryes[i].Name}".PadRight(Console.WindowWidth, ' ').Remove(Console.WindowWidth - 5));
+                }
+            }
         }
-        public void InsertEntryList(string path,int index, List<Entry> entryes)
+        public void InsertEntryList(string path, int index, List<Entry> entryes)
         {
             string[] dirs = Directory.GetDirectories(path);
             string[] files = Directory.GetFiles(path);
@@ -53,7 +65,7 @@ namespace FileManager
             Array.Sort(files);
             for (int i = 0; i < dirs.Length; i++)
             {
-                entryes.Insert(index, new Entry(dirs[i], Entry.Type.Directory))
+                entryes.Insert(index, new Entry(dirs[i], Entry.Type.Directory));
             }
             for (int i = 0; i < files.Length; i++)
             {

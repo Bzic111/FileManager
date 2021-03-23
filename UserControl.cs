@@ -267,7 +267,10 @@ namespace FileManager
             int index = 0;
             int LastPage = Pages.Count - 1;
             string CurrentCatalog = null;
-            MyTree.CurrentCatalog = null;            
+
+            List<Entry> tempEntryes;
+
+            MyTree.CurrentCatalog = null;
 
             do
             {
@@ -293,6 +296,10 @@ namespace FileManager
                         break;
 
                     case ConsoleKey.Enter:
+                        if (Entryes[index].type == Entry.Type.Directory)
+                        {
+                            tempEntryes = MyTree.GetEntryList(Entryes[index].Path);
+                        }
                         break;
                     case ConsoleKey.Escape:
                         Cycle = false;
@@ -319,11 +326,11 @@ namespace FileManager
                     case ConsoleKey.Home:
                         if (Page > 0)
                         {
-                            Page=0;
+                            Page = 0;
                             index = Page * 40;
                             FW.FillFrame(Pages[Page]);
                             CursorTop = FW.FrameTop;
-                        }                        
+                        }
                         break;
                     case ConsoleKey.End:
                         if (Page < LastPage)
@@ -334,7 +341,7 @@ namespace FileManager
                             CursorTop = FW.FrameTop;
                         }
                         break;
-                    
+
 
                     case ConsoleKey.UpArrow:
                         Console.SetCursorPosition(CursorLeft, CursorTop);
@@ -453,7 +460,7 @@ namespace FileManager
         {
 
             int currentLeft = left;
-            int currentTop;// = top + 2;
+            int currentTop; // = top + 2;
             string[] keys = new string[Cmds.Count];
             Cmds.Keys.CopyTo(keys, 0);
             if (top > 40 - Cmds.Count)
