@@ -41,6 +41,25 @@ namespace FileManager
             }
             return entryes;
         }
+        public string[] ToArray()
+        {
+
+        }
+        public void InsertEntryList(string path,int index, List<Entry> entryes)
+        {
+            string[] dirs = Directory.GetDirectories(path);
+            string[] files = Directory.GetFiles(path);
+            Array.Sort(dirs);
+            Array.Sort(files);
+            for (int i = 0; i < dirs.Length; i++)
+            {
+                entryes.Insert(index, new Entry(dirs[i], Entry.Type.Directory))
+            }
+            for (int i = 0; i < files.Length; i++)
+            {
+                entryes.Insert(index, new Entry(files[i], Entry.Type.File));
+            }
+        }
         public string[] FrameFormat(List<Entry> lst, int StartIndex)
         {
             string[] result = new string[40];

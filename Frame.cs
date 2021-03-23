@@ -15,6 +15,10 @@ namespace FileManager
         int FrameRightCol;
         int FrameSubRow;
         int FrameSubCol;
+        public Frame()
+        {
+                
+        }
         public Frame(int frameRows, int frameCols)
         {
             FrameRows = frameRows;
@@ -22,16 +26,26 @@ namespace FileManager
             Console.WindowHeight = frameRows + 8;
             Console.WindowWidth = frameCols * 2 + 2;
         }
-        public void ShowOne(int positionV, int positionH, int rows, int cols, bool sub = false)
+        public void ShowOne(int rows, int cols, bool sub = false)
         {
-            Console.SetCursorPosition(positionH, positionV);
+            Console.SetCursorPosition(0,0);
             string lineUp = "╔".PadRight(FrameCols * 2, '═') + "╗"; //"╦".PadRight(FrameWidth, '═') +
             string border = "║";
             string lineDown = "╚".PadRight(FrameCols * 2, '═') + "╝"; //"╩".PadRight(FrameWidth, '═') +
+            Console.Write(lineUp);
+            for (int i = 1; i < rows; i++)
+            {
+                Console.SetCursorPosition(0, i);
+                Console.Write(border);
+                Console.SetCursorPosition(FrameCols * 2, i);
+                Console.Write($"{border}");
+            }
+            Console.SetCursorPosition(0, rows);
+            Console.Write(lineDown);
             if (sub)
             {
                 int subPositionV = rows + 1;
-                ShowSub(rows, cols);
+                ShowSub(subPositionV, cols);
             }
             FrameLeftRow = 1;
             FrameLeftCol = 1;

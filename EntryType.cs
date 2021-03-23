@@ -20,6 +20,8 @@ namespace FileManager
         public string Extension;
         public string Size;
         public string ShortInfo;
+        public string FullInfo;
+        public string LastWrite;
         public Entry()
         {
 
@@ -31,14 +33,17 @@ namespace FileManager
             Name = path.Split('\\')[^1];
             if (File.Exists(path))
             {
-                long temp = new FileInfo(path).Length;
-                Extension = new FileInfo(path).Extension;
-
+                FileInfo fi = new FileInfo(path);
+                long temp = fi.Length;
+                Extension = fi.Extension;
+                LastWrite = fi.LastWriteTime.ToString();
+                FileAttributes fa = File.GetAttributes(path);
+                FullInfo = $"{Extension} {fi.Attributes} {LastWrite}";
                 if (temp < Kbyte)
                 {
                     Size = temp.ToString() + " b";
                 }
-                else if (temp < Mbyte)
+                else if (temp < Kbyte)
                 {
                     Size = (Math.Round((float)temp / (float)Kbyte), 2).ToString() + " Kb";
                 }
@@ -53,10 +58,12 @@ namespace FileManager
             }
             else if (Directory.Exists(path))
             {
+                LastWrite = Directory.GetLastWriteTime(path).ToString();
                 Extension = "Directory";
                 Size = "".PadRight(12, ' ');
             }
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
+
         }
     }
 }

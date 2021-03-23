@@ -173,6 +173,22 @@ namespace FileManager
         {
             Console.Write(path.PadRight(FrameWidth, ' ').Remove(FrameWidth - 1));
         }
+        public void FillFrame(List<Entry> filler)
+        {
+            for (int i = 0; i < filler.Count; i++)
+            {
+                Console.SetCursorPosition(LeftFrameCursorLeft, FrameTop + i);
+                Console.Write(filler[i].Name);
+            }
+            if (filler.Count < 40)
+            {
+                for (int i = filler.Count; i < 41; i++)
+                {
+                    Console.SetCursorPosition(LeftFrameCursorLeft, FrameTop + i);
+                    Console.Write("".PadRight(72, ' '));
+                }
+            }
+        }
         public void FillLeftFrame(List<Entry> filler)
         {
 
