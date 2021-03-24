@@ -24,11 +24,12 @@ namespace FileManager
             Tree MyTree = new Tree();
             Comands Com = new Comands();
             Frame fr = new Frame(0, 0, 42, 74);
-
+            UserControl control = new UserControl(MyTree, fr);
             fr.Coloring(Frame.Colorscheme.Default);
 
-
             List<Entry> entr = new List<Entry>();
+            List<Entry> entryes = new List<Entry>();
+
             MyTree.SetRoots();
             int rootIndex = 0;
             Console.ResetColor();
@@ -47,8 +48,18 @@ namespace FileManager
                 switch (Console.ReadKey().Key)
                 {
                     case ConsoleKey.Enter:
-                        entr = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
-                        Cycle = false;
+                        List<Entry> InEntry = new List<Entry>();
+                        List<List<Entry>> InPages = new List<List<Entry>>();
+                        InEntry = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
+                        InPages = MyTree.ToPages(InEntry);
+                        control.OneTab(InPages);
+                        int count = 0;
+                        fr.Clear();
+                        foreach (var item in MyTree.Roots)
+                        {
+                            fr.SetColor(Frame.ColorsPreset.Normal);
+                            fr.WriteText(item, 0, count++);                           
+                        }
                         break;
                     case ConsoleKey.UpArrow:
                         fr.SetColor(Frame.ColorsPreset.Normal);
@@ -65,6 +76,9 @@ namespace FileManager
                         {
                             rootIndex++;
                         }
+                        break;
+                    case ConsoleKey.Escape:
+                        Cycle = false;
                         break;
                     default:
                         break;

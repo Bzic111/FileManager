@@ -41,8 +41,8 @@ namespace FileManager
         int FrameSubRow;
         int FrameSubCol;
 
-        int StartCol;
-        int StartRow;
+        public int StartCol;
+        public int StartRow;
         public int rows;
         public int cols;
         public List<Object> Lines;
@@ -176,7 +176,14 @@ namespace FileManager
             Console.Write(str.PadRight(cols - 2, ' '));
             Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
         }
-
+        public void Clear()
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                Console.SetCursorPosition(StartCol, StartRow + i);
+                Console.Write("".PadRight(cols,' '));
+            }
+        }
         public void Message(string str, Frame fr)
         {
             fr.WriteText(str, 0, 0);

@@ -26,7 +26,7 @@ namespace FileManager
         public string FullInfo;
         public string LastWrite;
         public bool Visible = false;
-
+        public string Parent;
         public List<Entry> Catalog;
 
         public Entry()
@@ -35,6 +35,7 @@ namespace FileManager
         }
         public Entry(string path, Type t)
         {
+            
             Path = path;
             type = t;
             Name = path.Split('\\')[^1];
@@ -68,9 +69,11 @@ namespace FileManager
                 LastWrite = Directory.GetLastWriteTime(path).ToString();
                 Extension = "Directory";
                 Size = "".PadRight(12, ' ');
+                DirectoryInfo di = new DirectoryInfo(path);
+                Path = di.Parent.ToString();
             }
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
-
+            
         }
         void GetName() => Console.Write(Name);
         string GetPath() => Path;
