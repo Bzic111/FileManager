@@ -473,7 +473,7 @@ namespace FileManager
         //    } while (cycle);
         //    FW.SetColor(FrontView.ColorsPreset.Normal);
         //}
-        static public void ShowContext(Dictionary<string, Comands.Comand> Cmds, FrontView FW, int top, int left)
+        public void ShowContext(Dictionary<string, Comands.Comand> Cmds, FrontView FW, int top, int left)
         {
 
             int currentLeft = left;
@@ -498,109 +498,109 @@ namespace FileManager
             Console.SetCursorPosition(currentLeft, currentTop);
         }
 
-        //void ReadCommand(string path)
-        //{
-        //    string[] tempLine = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        //    string comand;      // = tempLine[0];
-        //    string target;    // = tempLine[1];
-        //    string attr = null;        // = tempLine[2];
-        //    if (tempLine.Length < 3)
-        //    {
-        //        comand = tempLine[0];
-        //        target = tempLine[1];
-        //    }
-        //    else
-        //    {
-        //        comand = tempLine[0];
-        //        target = tempLine[1];
-        //        attr = tempLine[2];
-        //    }
-        //    switch (comand)
-        //    {
-        //        case "cd":
-        //            try
-        //            {
-        //                string temp = Com.ChangeDirectory(target, path);
-        //                if (Directory.Exists(temp))
-        //                {
-        //                    MyTree.CurrentCatalog = temp;
-        //                }
-        //            }
-        //            catch (Exception e)
-        //            {
+        void ReadCommand(Entry entry)
+        {
+            string[] tempLine = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string comand;      // = tempLine[0];
+            string target;    // = tempLine[1];
+            string attr = null;        // = tempLine[2];
+            if (tempLine.Length < 3)
+            {
+                comand = tempLine[0];
+                target = tempLine[1];
+            }
+            else
+            {
+                comand = tempLine[0];
+                target = tempLine[1];
+                attr = tempLine[2];
+            }
+            switch (comand)
+            {
+                case "cd":
+                    try
+                    {
+                        string temp = Com.ChangeDirectory(target, path);
+                        if (Directory.Exists(temp))
+                        {
+                            MyTree.CurrentCatalog = temp;
+                        }
+                    }
+                    catch (Exception e)
+                    {
 
-        //            }
-        //            break;
-        //        case "del":
-        //            if (Directory.Exists(path + '\\' + target))
-        //            {
-        //                if (Directory.GetDirectories(path + '\\' + target) == Array.Empty<string>())
-        //                {
-        //                    Com.DeleteDir(path + '\\' + target);
-        //                }
-        //                if (!string.IsNullOrEmpty(attr) & attr == "-f")
-        //                {
-        //                    Com.DeleteCatalog(path + '\\' + target);
-        //                }
-        //            }
-        //            else if (File.Exists(path + '\\' + target))
-        //            {
-        //                Com.DeleteFile(path + '\\' + target);
-        //            }
-        //            else
-        //            {
-        //                Console.Write("Bad path");
-        //            }
-        //            break;
-        //        case "rename":
-        //            if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-        //            {
-        //                Com.RenameDir(path + '\\' + target, attr);
-        //            }
-        //            else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-        //            {
-        //                Com.RenameFile(path + '\\' + target, attr);
-        //            }
-        //            else if (string.IsNullOrEmpty(attr))
-        //            {
-        //                Console.Write("Bad name");
-        //            }
-        //            else
-        //            {
-        //                Console.Write("Bad path");
-        //            }
-        //            break;
-        //        case "copy":
-        //            if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-        //            {
-        //                if (Directory.Exists(attr))
-        //                {
-        //                    Console.Write("Directory already exist");
-        //                }
-        //                else
-        //                {
-        //                    Com.tempDirPath = path + '\\' + target;
-        //                    Com.CopyDir(path + '\\' + target, attr);
-        //                }
-        //            }
-        //            else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-        //            {
-        //                if (File.Exists(attr))
-        //                {
-        //                    Console.Write("File already exist");
-        //                }
-        //                else
-        //                {
-        //                    Com.tempFilePath = path + '\\' + target;
-        //                    Com.CopyFile(path + '\\' + target, attr);
-        //                }
-        //            }
-        //            break;
-        //        default:
-        //            Console.Write($"Command \"{comand}\" is not supported");
-        //            break;
-        //    }
-        //}
+                    }
+                    break;
+                case "del":
+                    if (Directory.Exists(path + '\\' + target))
+                    {
+                        if (Directory.GetDirectories(path + '\\' + target) == Array.Empty<string>())
+                        {
+                            Com.DeleteDir(path + '\\' + target);
+                        }
+                        if (!string.IsNullOrEmpty(attr) & attr == "-f")
+                        {
+                            Com.DeleteCatalog(path + '\\' + target);
+                        }
+                    }
+                    else if (File.Exists(path + '\\' + target))
+                    {
+                        Com.DeleteFile(path + '\\' + target);
+                    }
+                    else
+                    {
+                        Console.Write("Bad path");
+                    }
+                    break;
+                case "rename":
+                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        Com.RenameDir(path + '\\' + target, attr);
+                    }
+                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        Com.RenameFile(path + '\\' + target, attr);
+                    }
+                    else if (string.IsNullOrEmpty(attr))
+                    {
+                        Console.Write("Bad name");
+                    }
+                    else
+                    {
+                        Console.Write("Bad path");
+                    }
+                    break;
+                case "copy":
+                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        if (Directory.Exists(attr))
+                        {
+                            Console.Write("Directory already exist");
+                        }
+                        else
+                        {
+                            Com.tempDirPath = path + '\\' + target;
+                            Com.CopyDir(path + '\\' + target, attr);
+                        }
+                    }
+                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        if (File.Exists(attr))
+                        {
+                            Console.Write("File already exist");
+                        }
+                        else
+                        {
+                            Com.tempFilePath = path + '\\' + target;
+                            Com.CopyFile(path + '\\' + target, attr);
+                        }
+                    }
+                    break;
+                default:
+                    Console.Write($"Command \"{comand}\" is not supported");
+                    break;
+            }
+        }
 
 
         void ConsoleReader(int top, int left, string path)

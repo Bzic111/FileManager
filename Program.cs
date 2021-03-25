@@ -80,6 +80,8 @@ namespace FileManager
                     case ConsoleKey.Escape:
                         Cycle = false;
                         break;
+                    case ConsoleKey.Applications:
+                        break;
                     default:
                         break;
                 }
