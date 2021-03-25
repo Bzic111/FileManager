@@ -602,7 +602,56 @@ namespace FileManager
             }
         }
 
-
+        void RootSelector()
+        {
+            bool Cycle = true;
+            int rootIndex = 0;
+            do
+            {
+                fr.SetColor(Frame.ColorsPreset.Selected);
+                fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.Enter:
+                        List<Entry> InEntry = new List<Entry>();
+                        List<List<Entry>> InPages = new List<List<Entry>>();
+                        InEntry = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
+                        InPages = MyTree.ToPages(InEntry);
+                        OneTab(InPages);
+                        int count = 0;
+                        fr.Clear();
+                        foreach (var item in MyTree.Roots)
+                        {
+                            fr.SetColor(Frame.ColorsPreset.Normal);
+                            fr.WriteText(item, 0, count++);
+                        }
+                        break;
+                    case ConsoleKey.UpArrow:
+                        fr.SetColor(Frame.ColorsPreset.Normal);
+                        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+                        if (rootIndex > 0)
+                        {
+                            rootIndex--;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        fr.SetColor(Frame.ColorsPreset.Normal);
+                        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+                        if (rootIndex < MyTree.Roots.Count - 1)
+                        {
+                            rootIndex++;
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        Cycle = false;
+                        break;
+                    case ConsoleKey.Applications:
+                        break;
+                    default:
+                        break;
+                }
+            } while (Cycle);
+        }
         void ConsoleReader(int top, int left, string path)
         {
             StringBuilder sb = new StringBuilder();
@@ -618,7 +667,8 @@ namespace FileManager
             do
             {
                 Console.SetCursorPosition(cursorLeft, cursorTop);
-                switch (Console.ReadKey().Key)
+                var key = Console.ReadKey();
+                switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
                         if (Memory.Count > 0 & index > 0)
@@ -656,9 +706,7 @@ namespace FileManager
                         cycle = false;
                         break;
                     default:
-                        x = Console.Read();
-                        c = Convert.ToChar(x);
-                        sb.Append(c);
+                        sb.Append(key);
                         cursorLeft = 0;
                         Console.Write(sb.ToString());
                         cursorLeft = sb.Length;

@@ -26,21 +26,26 @@ namespace FileManager
             Frame fr = new Frame(0, 0, 42, 74);
             UserControl control = new UserControl(MyTree, fr);
             fr.Coloring(Frame.Colorscheme.Default);
-
+            Frame rootFrame = new Frame(21,21,10,15);
             List<Entry> entr = new List<Entry>();
             List<Entry> entryes = new List<Entry>();
 
             MyTree.SetRoots();
             int rootIndex = 0;
             Console.ResetColor();
-            fr.Show();
+
+            rootFrame.Coloring(Frame.Colorscheme.BIOS);
+
+
+            rootFrame.Show();
             foreach (var item in MyTree.Roots)
             {
-                fr.SetColor(Frame.ColorsPreset.Normal);
-                fr.WriteText(item, 0, rootIndex);
+                rootFrame.SetColor(Frame.ColorsPreset.Normal);
+                rootFrame.WriteText(item, 0, rootIndex);
                 rootIndex++;
             }
             rootIndex = 0;
+
             do
             {
                 fr.SetColor(Frame.ColorsPreset.Selected);
