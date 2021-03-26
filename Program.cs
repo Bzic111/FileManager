@@ -91,9 +91,6 @@ namespace FileManager
                         break;
                 }
             } while (Cycle);
-
-
         }
-
     }
 }
