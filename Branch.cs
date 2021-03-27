@@ -42,7 +42,7 @@ namespace FileManager
                 }
             }
         }
-        public void InsertLines(List<Entry> entryes,int index)
+        public void InsertLines(List<Entry> entryes, int index)
         {
             InsertIndex.Add(index);
             for (int i = 0; i < entryes.Count; i++)

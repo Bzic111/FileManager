@@ -17,6 +17,8 @@ namespace FileManager
         private double Mbyte = Math.Pow(1024, 2);
         private double Gbyte = Math.Pow(1024, 3);
 
+        public string Parent;
+
         public string Name;
         public string Path;
         public Type type;
@@ -26,7 +28,7 @@ namespace FileManager
         public string FullInfo;
         public string LastWrite;
         public bool Visible = false;
-        public string Parent;
+
         public List<Entry> Catalog;
 
         public Entry()
@@ -35,11 +37,11 @@ namespace FileManager
         }
         public Entry(string path, Type t)
         {
-            
+
             Path = path;
             type = t;
             Name = path.Split('\\')[^1];
-            if (File.Exists(path))
+            if (type == Type.File)
             {
                 FileInfo fi = new FileInfo(path);
                 long temp = fi.Length;
@@ -73,9 +75,10 @@ namespace FileManager
                 Path = di.Parent.ToString();
             }
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
-            
+            Parent = Directory.GetParent(path).FullName;
         }
         void GetName() => Console.Write(Name);
         string GetPath() => Path;
+        public string GetParent() => Parent;
     }
 }

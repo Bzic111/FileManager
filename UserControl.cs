@@ -11,13 +11,14 @@ namespace FileManager
         Comands Com;
         Tree MyTree;
         Frame fr;
+        Frame cr;
         public UserControl(Tree tree, Frame frame)
         {
-            
             MyTree = tree;
             fr = frame;
             Com = new Comands();
         }
+
         //public void TwoTabs(List<List<Entry>> Pages, List<Entry> Entryes, int CursorLeft, int CursorTop)
         //{
         //    bool Cycle = true;
@@ -259,8 +260,9 @@ namespace FileManager
         //        }
         //    } while (Cycle);
         //}
-        public void OneTab(List<List<Entry>> Pages)
+        public void OneTab(List<List<Entry>> Pages, out Entry entr)
         {
+            entr = Pages[0][0];
             bool Cycle = true;
             int Page = 0;
             int index = 0;
@@ -279,13 +281,13 @@ namespace FileManager
             do
             {
                 fr.SetColor(Frame.ColorsPreset.Normal);
-                fr.WriteText(Pages[Page][index].Name,0,index);
+                fr.WriteText(Pages[Page][index].Name, 0, index);
 
                 foreach (var item in Pages[Page])
                 {
                     fr.WriteText(item.Name, 0, index);
                 }
-                
+
                 fr.SetColor(Frame.ColorsPreset.Selected);
                 fr.WriteText(Pages[Page][index].Name, 0, index);
 
@@ -300,6 +302,8 @@ namespace FileManager
                     case ConsoleKey.Backspace:
                         break;
                     case ConsoleKey.Tab:
+                        entr = Pages[Page][index];
+                        
                         break;
 
                     case ConsoleKey.Enter:
@@ -307,10 +311,10 @@ namespace FileManager
                         {
                             List<Entry> InEntry = new List<Entry>();
                             List<List<Entry>> InPages = new List<List<Entry>>();
-                            InEntry = MyTree.GetEntryList(Pages[Page][index].Path+'\\'+ Pages[Page][index].Name);
+                            InEntry = MyTree.GetEntryList(Pages[Page][index].Path + '\\' + Pages[Page][index].Name);
                             InPages = MyTree.ToPages(InEntry);
-                            UserControl uc = new UserControl(MyTree,fr);
-                            uc.OneTab(InPages);
+                            UserControl uc = new UserControl(MyTree, fr);
+                            uc.OneTab(InPages,out entr);
                         }
                         fr.Clear();
                         lineCount = 0;
@@ -413,6 +417,7 @@ namespace FileManager
 
             } while (Cycle);
         }
+
         //void SelectorContext(int top, int left, string path)
         //{
         //    int index = 0;
@@ -498,109 +503,7 @@ namespace FileManager
             Console.SetCursorPosition(currentLeft, currentTop);
         }
 
-        void ReadCommand(Entry entry)
-        {
-            string[] tempLine = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            string comand;      // = tempLine[0];
-            string target;    // = tempLine[1];
-            string attr = null;        // = tempLine[2];
-            if (tempLine.Length < 3)
-            {
-                comand = tempLine[0];
-                target = tempLine[1];
-            }
-            else
-            {
-                comand = tempLine[0];
-                target = tempLine[1];
-                attr = tempLine[2];
-            }
-            switch (comand)
-            {
-                case "cd":
-                    try
-                    {
-                        string temp = Com.ChangeDirectory(target, path);
-                        if (Directory.Exists(temp))
-                        {
-                            MyTree.CurrentCatalog = temp;
-                        }
-                    }
-                    catch (Exception e)
-                    {
 
-                    }
-                    break;
-                case "del":
-                    if (Directory.Exists(path + '\\' + target))
-                    {
-                        if (Directory.GetDirectories(path + '\\' + target) == Array.Empty<string>())
-                        {
-                            Com.DeleteDir(path + '\\' + target);
-                        }
-                        if (!string.IsNullOrEmpty(attr) & attr == "-f")
-                        {
-                            Com.DeleteCatalog(path + '\\' + target);
-                        }
-                    }
-                    else if (File.Exists(path + '\\' + target))
-                    {
-                        Com.DeleteFile(path + '\\' + target);
-                    }
-                    else
-                    {
-                        Console.Write("Bad path");
-                    }
-                    break;
-                case "rename":
-                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        Com.RenameDir(path + '\\' + target, attr);
-                    }
-                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        Com.RenameFile(path + '\\' + target, attr);
-                    }
-                    else if (string.IsNullOrEmpty(attr))
-                    {
-                        Console.Write("Bad name");
-                    }
-                    else
-                    {
-                        Console.Write("Bad path");
-                    }
-                    break;
-                case "copy":
-                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        if (Directory.Exists(attr))
-                        {
-                            Console.Write("Directory already exist");
-                        }
-                        else
-                        {
-                            Com.tempDirPath = path + '\\' + target;
-                            Com.CopyDir(path + '\\' + target, attr);
-                        }
-                    }
-                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        if (File.Exists(attr))
-                        {
-                            Console.Write("File already exist");
-                        }
-                        else
-                        {
-                            Com.tempFilePath = path + '\\' + target;
-                            Com.CopyFile(path + '\\' + target, attr);
-                        }
-                    }
-                    break;
-                default:
-                    Console.Write($"Command \"{comand}\" is not supported");
-                    break;
-            }
-        }
 
         void RootSelector()
         {
@@ -617,7 +520,7 @@ namespace FileManager
                         List<List<Entry>> InPages = new List<List<Entry>>();
                         InEntry = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
                         InPages = MyTree.ToPages(InEntry);
-                        OneTab(InPages);
+                        OneTab(InPages,out _);
                         int count = 0;
                         fr.Clear();
                         foreach (var item in MyTree.Roots)
@@ -658,8 +561,7 @@ namespace FileManager
             bool cycle = true;
             int index = 0;
             string temp;
-            int x;
-            char c;
+
             int cursorTop = top;
             int cursorLeft = left;
             Console.SetCursorPosition(0, cursorTop);

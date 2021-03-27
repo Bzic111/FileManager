@@ -276,5 +276,109 @@ namespace FileManager
                 Console.Write("Bad Way");
             }
         }
+
+        void ReadCommand(string path)
+        {
+            string[] tempLine = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string comand;      // = tempLine[0];
+            string target;    // = tempLine[1];
+            string attr = null;        // = tempLine[2];
+            if (tempLine.Length < 3)
+            {
+                comand = tempLine[0];
+                target = tempLine[1];
+            }
+            else
+            {
+                comand = tempLine[0];
+                target = tempLine[1];
+                attr = tempLine[2];
+            }
+            switch (comand)
+            {
+                case "cd":
+                    try
+                    {
+                        string temp = ChangeDirectory(target, path);
+                        if (Directory.Exists(target))
+                        {
+                            //MyTree.CurrentCatalog = temp;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                    break;
+                case "del":
+                    if (Directory.Exists(path + '\\' + target))
+                    {
+                        if (Directory.GetDirectories(path + '\\' + target) == Array.Empty<string>())
+                        {
+                            DeleteDir(path + '\\' + target);
+                        }
+                        if (!string.IsNullOrEmpty(attr) & attr == "-f")
+                        {
+                            DeleteCatalog(path + '\\' + target);
+                        }
+                    }
+                    else if (File.Exists(path + '\\' + target))
+                    {
+                        DeleteFile(path + '\\' + target);
+                    }
+                    else
+                    {
+                        Console.Write("Bad path");
+                    }
+                    break;
+                case "rename":
+                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        RenameDir(path + '\\' + target, attr);
+                    }
+                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        RenameFile(path + '\\' + target, attr);
+                    }
+                    else if (string.IsNullOrEmpty(attr))
+                    {
+                        Console.Write("Bad name");
+                    }
+                    else
+                    {
+                        Console.Write("Bad path");
+                    }
+                    break;
+                case "copy":
+                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        if (Directory.Exists(attr))
+                        {
+                            Console.Write("Directory already exist");
+                        }
+                        else
+                        {
+                            tempDirPath = path + '\\' + target;
+                            CopyDir(path + '\\' + target, attr);
+                        }
+                    }
+                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
+                    {
+                        if (File.Exists(attr))
+                        {
+                            Console.Write("File already exist");
+                        }
+                        else
+                        {
+                            tempFilePath = path + '\\' + target;
+                            CopyFile(path + '\\' + target, attr);
+                        }
+                    }
+                    break;
+                default:
+                    Console.Write($"Command \"{comand}\" is not supported");
+                    break;
+            }
+        }
     }
 }

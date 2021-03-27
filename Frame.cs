@@ -83,15 +83,17 @@ namespace FileManager
         }
         public void Show()
         {
+            SetColor(ColorsPreset.Normal);
+            Console.SetCursorPosition(StartCol, StartRow);
             Console.Write($"{LeftUpCorner}".PadRight(cols - 1, Liner) + RightUpCorner);
             for (int i = 1; i < rows; i++)
             {
                 Console.SetCursorPosition(StartCol, StartRow + i);
                 Console.Write(Border);
-                Console.SetCursorPosition(cols - 1, i);
+                Console.SetCursorPosition(StartCol + cols - 1, StartRow + i);
                 Console.Write($"{Border}");
             }
-            Console.SetCursorPosition(StartCol, rows);
+            Console.SetCursorPosition(StartCol, StartRow + rows);
             Console.Write($"{LeftDownCorner}".PadRight(cols - 1, Liner) + RightDownCorner);
         }
         void ShowLines()
@@ -170,7 +172,20 @@ namespace FileManager
             FrameSubCol = 1;
         }
 
-        public void WriteText(string str, int col, int row)
+        public void WriteText(string str, bool nextLine = true, int col = 0, int row = 0)
+        {
+            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            Console.Write(str.PadRight(cols - 2, ' '));
+            if (nextLine)
+            {
+                Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            }
+            else
+            {
+                Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 2);
+            }
+        }
+        public void WriteText(string str, int col = 0, int row = 0)
         {
             Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
             Console.Write(str.PadRight(cols - 2, ' '));
@@ -180,9 +195,17 @@ namespace FileManager
         {
             for (int i = 0; i < rows; i++)
             {
-                Console.SetCursorPosition(StartCol, StartRow + i);
-                Console.Write("".PadRight(cols,' '));
+                Console.SetCursorPosition(StartCol+1, StartRow + i);
+                Console.Write("".PadRight(cols-2, ' '));
             }
+        }
+        public void Write(string str)
+        {
+            Console.Write(str);
+        }
+        public void SetCursorPosition(int col, int row)
+        {
+            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
         }
         public void Message(string str, Frame fr)
         {

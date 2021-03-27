@@ -10,7 +10,7 @@ namespace FileManager
     {
         public string CurrentCatalog { get; set; }
         public List<string> Roots { get; private set; }
-        public List<string> Drives { get; }
+        List<string> Drives;
         public Tree() => SetRoots();
         public void SetRoots()
         {
@@ -41,6 +41,22 @@ namespace FileManager
             }
             return entryes;
         }
+        public List<List<Entry>> ToPages(List<Entry> Entryes)
+        {
+            List<List<Entry>> Pages = new List<List<Entry>>();
+            for (int i = 0, counter = 0; counter < Entryes.Count; i++)
+            {
+                Pages.Add(new List<Entry>());
+                for (int j = 0; j < 40 & counter < Entryes.Count; j++, counter++)
+                {
+                    Pages[i].Add(Entryes[counter]);
+                }
+            }
+            return Pages;
+        }
+
+
+
         public void ToArray(List<Entry> entryes)
         {
             StringBuilder sb = new StringBuilder();
@@ -94,19 +110,6 @@ namespace FileManager
                 }
             }
             return result;
-        }
-        public List<List<Entry>> ToPages(List<Entry> Entryes)
-        {
-            List<List<Entry>> Pages = new List<List<Entry>>();
-            for (int i = 0, counter = 0; counter < Entryes.Count; i++)
-            {
-                Pages.Add(new List<Entry>());
-                for (int j = 0; j < 40 & counter < Entryes.Count; j++, counter++)
-                {
-                    Pages[i].Add(Entryes[counter]);
-                }
-            }
-            return Pages;
         }
     }
 }
