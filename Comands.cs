@@ -7,377 +7,443 @@ namespace FileManager
 {
     class Comands
     {
-        public delegate void Comand(string path);
-        public delegate void ComandTo(string path, string destination);
-        public Comand[] ComandDelegates;
-        public ComandTo[] ComandToDelegates;
-        public Dictionary<string, Comand> AllComands;
-        string[] ComandList;
-        string tempPath;
-        string tempDirPath;
-        string tempFilePath;
-        Tree Tree;
         public Comands()
         {
-            AllComands = new Dictionary<string, Comand>
-            {
-                {"Create Directory",CreateDir },
-                {"Delete Directory",DeleteCatalog },
-                { "Copy",Copy},
-                {"Paste",Paste }
-            };
 
-            ComandList = new string[]
-            {
-                "Create Directory","Delete","Copy to","Cut","Paste","Rename","Info"
-            };
-            ComandDelegates = new Comand[]
-            {
-                CreateDir,
-                DeleteDir,
-                DeleteCatalog,
-                DeleteFile,
-                CopyToTemp,
-                CopyFromTemp,
-                Cut
-            };
-            ComandToDelegates = new ComandTo[]
-            {
-                CopyFile,
-                CopyDir,
-                RenameDir,
-                RenameFile,
-                RewriteFile
-            };
         }
-        public
-        bool CheckPath(string path)
+        public void Reader(string str, ref Tree tree, Entry entry, out bool reFreshFrame)
         {
-            return Directory.Exists(path);
-        }
-        public string ChangeDirectory(string name, string currentPath)
-        {
+            string[] inLine = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            reFreshFrame = false;
+            string comand = null;
             string path = null;
-            switch (name)
+            string attr = null;
+            int charCount = 0;
+            for (int i = 0; i < str.Length; i++, charCount++)
             {
-                case "\\":
-
-                    break;
-                default:
-                    break;
-            }
-            if (name == "\\")
-            {
-                string[] temp = currentPath.Split('\\');
-                for (int i = 0; i < temp.Length - 1; i++)
+                if (!char.IsWhiteSpace(str[i]))
                 {
-                    if (i == 0)
+                    comand += str[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = ++charCount; i < str.Length; i++, charCount++)
+            {
+                if (str[i] != '-')
+                {
+                    path += str[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = ++charCount; i < str.Length; i++, charCount++)
+            {
+                if (str[i] == '-')
+                {
+                    continue;
+                }
+                else if (!char.IsWhiteSpace(str[i]))
+                {
+                    attr += str[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+            path.Trim();
+            switch (comand)
+            {
+                case "CD":
+                case "cd":
+                    if (path == "\\")
                     {
-                        path += temp[i];
+                        tree.ChangeDirectory(tree.Pages[0][0].Parent);
+                    }
+                    else if (Directory.Exists(path + '\\'))
+                    {
+                        tree.ChangeDirectory(path + '\\');
+                        reFreshFrame = true;
+                    }
+                    else if (Directory.Exists(entry.Path + path + '\\'))
+                    {
+                        tree.ChangeDirectory(entry.Path + path + '\\');
+                        reFreshFrame = true;
                     }
                     else
                     {
-                        path += "\\" + temp[i];
+                        Console.Write("Bad Path!");
                     }
-                }
-            }
-            else if (name[^1] == ':')
-            {
-                path = name + '\\';
-            }
-            else
-            {
-                path += "\\" + name;
+                    break;
+                case "del":
+                case "DEL":
+                case "Del":
+                    if (Directory.Exists(path))
+                    {
+
+                        try
+                        {
+                            DirectoryInfo dif = new DirectoryInfo(entry.Path + path);
+                            dif.Delete(true);
+                            reFreshFrame = true;
+                        }
+                        catch (Exception e)
+                        {
+                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                            Error.SetName("Error");
+                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.SetColor(Frame.ColorsPreset.Normal);
+                            Error.Show();
+                            Error.Clear();
+                            Error.WriteName();
+                            Error.WriteText(e.Message);
+                            Console.ResetColor();
+                            Console.ReadKey(true);
+                        }
+                    }
+                    else if (File.Exists(path))
+                    {
+                        try
+                        {
+                            FileInfo fi = new FileInfo(entry.Path + path);
+                            fi.Delete();
+                        }
+                        catch (Exception e)
+                        {
+                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                            Error.SetName("Error");
+                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.SetColor(Frame.ColorsPreset.Normal);
+                            Error.Show();
+                            Error.Clear();
+                            Error.WriteName();
+                            Error.WriteText(e.Message);
+                            Console.ResetColor();
+                            Console.ReadKey(true);
+                        }
+
+                    }
+                    break;
+                case "new":
+                case "New":
+                case "NEW":
+                    if (attr == "d" | attr == "D")
+                    {
+                        try
+                        {
+                            DirectoryInfo dif = new DirectoryInfo(tree.CurrentPath + path + '\\');
+                            dif.Create();
+                            reFreshFrame = true;
+                        }
+                        catch (Exception e)
+                        {
+                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                            Error.SetName("Acces Denied");
+                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.SetColor(Frame.ColorsPreset.Normal);
+                            Error.Show();
+                            Error.Clear();
+                            Error.WriteName();
+                            Error.WriteText(e.Message);
+                            Console.ResetColor();
+                            Console.ReadKey(true);
+                        }
+                    }
+                    else if (attr == "f" | attr == "F")
+                    {
+                        try
+                        {
+                            FileInfo fi = new FileInfo(tree.CurrentPath + path);
+                            fi.Create();
+                            reFreshFrame = true;
+                        }
+                        catch (Exception e)
+                        {
+                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                            Error.SetName("Error");
+                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.SetColor(Frame.ColorsPreset.Normal);
+                            Error.Show();
+                            Error.Clear();
+                            Error.WriteName();
+                            Error.WriteText(e.Message);
+                            Console.ResetColor();
+                            Console.ReadKey(true);
+                        }
+                    }
+                    break;
+                case "move":
+                case "Move":
+                case "MOVE":
+                    if (Directory.Exists(attr) & (Directory.Exists(path) | File.Exists(path)))
+                    {
+                        try
+                        {
+                            Directory.Move(path, attr);
+                        }
+                        catch (Exception e)
+                        {
+                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                            Error.SetName("Acces Denied");
+                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.SetColor(Frame.ColorsPreset.Normal);
+                            Error.Show();
+                            Error.Clear();
+                            Error.WriteName();
+                            Error.WriteText(e.Message);
+                            Console.ResetColor();
+                            Console.ReadKey(true);
+                        }
+                    }
+                    break;
+                case "copy":
+                case "COPY":
+                case "Copy":
+                    if (File.Exists(entry.Path + path) & !File.Exists(attr))
+                    {
+                        try
+                        {
+                            File.Copy(entry.Path + path, attr);
+                        }
+                        catch (Exception e)
+                        {
+                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                            Error.SetName("Acces Denied");
+                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.SetColor(Frame.ColorsPreset.Normal);
+                            Error.Show();
+                            Error.Clear();
+                            Error.WriteName();
+                            Error.WriteText(e.Message);
+                            Console.ResetColor();
+                            Console.ReadKey(true);
+                        }
+                    }
+                    else if (File.Exists(attr))
+                    {
+                        string errorStr = $"File {attr} already exist";
+                        Frame Error = new Frame(30, 30, 5, errorStr.Length + 2);
+                        Error.SetName("File exist");
+                        Error.Coloring(Frame.Colorscheme.Warning);
+                        Error.SetColor(Frame.ColorsPreset.Normal);
+                        Error.Show();
+                        Error.Clear();
+                        Error.WriteName();
+                        Error.WriteText(errorStr);
+                        Console.ResetColor();
+                        Console.ReadKey(true);
+                    }
+                    else if (!File.Exists(entry.Path + path))
+                    {
+                        string errorStr = $"File {path} not exist";
+                        Frame Error = new Frame(30, 30, 5, errorStr.Length + 2);
+                        Error.SetName("File not exist");
+                        Error.Coloring(Frame.Colorscheme.Warning);
+                        Error.SetColor(Frame.ColorsPreset.Normal);
+                        Error.Show();
+                        Error.Clear();
+                        Error.WriteName();
+                        Error.WriteText(errorStr);
+                        Console.ResetColor();
+                        Console.ReadKey(true);
+                    }
+                    break;
+                default:
+                    Console.Write("Bad Comand!");
+                    break;
             }
 
-            return path;
         }
-        public void ShowComandList(int left, int top)
+        public void Delete(Entry entry)
         {
-            int currentLeft = left;
-            int currentTop = top + 2;
-            for (int i = 0; i < ComandList.Length; i++)
+            Frame warn = new Frame(30, 30, 5, 60);
+            warn.Coloring(Frame.Colorscheme.Warning);
+
+            if (entry.type == Entry.Type.Directory)
             {
-                Console.BackgroundColor = ConsoleColor.Gray;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.SetCursorPosition(currentLeft + 10, currentTop + i);
-                Console.Write(ComandList[i]);
-            }
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(currentLeft, currentTop);
-        }
-        public string[] FileInfo(string path)
-        {
-            string[] result = new string[5];
-            FileInfo info = new FileInfo(path);
-            result[0] = info.Attributes.ToString();
-            result[1] = info.Extension;
-            result[2] = info.CreationTime.ToString();
-            result[3] = info.LastWriteTime.ToString();
-            result[4] = info.Length.ToString();
-            return result;
-        }
-        void CreateDir(string path)
-        {
-            Directory.CreateDirectory(path);
-        }
-        void CreateFile(string path)
-        {
-            File.Create(path);
-        }
-        void DeleteDir(string path)
-        {
-            Directory.Delete(path);
-        }
-        void DeleteCatalog(string path)
-        {
-            string[] dirs = Directory.GetDirectories(path);
-            string[] files = Directory.GetFiles(path);
-            foreach (var item in files)
-            {
-                File.Delete(item);
-            }
-            foreach (var item in dirs)
-            {
-                if (Directory.Exists(item))
+                try
                 {
-                    DeleteCatalog(item);
+                    DirectoryInfo di = (DirectoryInfo)entry.GetInfoType();
+                    di.Delete(true);
                 }
-                Directory.Delete(item);
-            }
-        }
-        void DeleteFile(string path)
-        {
-            File.Delete(path);
-        }
-        void CopyToTemp(string path)
-        {
-            CopyDir(path, @"%temp%\temporaryFolder");
-        }
-        void CopyFromTemp(string destination)
-        {
-            CopyDir(@"%temp%\temporaryFolder", destination);
-        }
-        void Copy(string path)
-        {
-            if (Directory.Exists(path))
-            {
-                tempDirPath = path;
-            }
-            else if (File.Exists(path))
-            {
-                tempFilePath = path;
-            }
-        }
-        void CopyFile(string path, string destination)
-        {
-            File.Copy(path, destination);
-        }
-        void CopyDir(string path, string destination)
-        {
-            Directory.CreateDirectory(destination);
-            string[] dirs = Directory.GetDirectories(path);
-            string[] files = Directory.GetFiles(path);
-            ///copy all files
-            foreach (var item in files)
-            {
-                File.Copy(item, destination);
-            }
-            /// create new dirs
-            foreach (var item in dirs)
-            {
-                string temp = item.Split('\\')[^1];
-                Directory.CreateDirectory(destination + "\\" + temp);
-                /// reCopyDir 
-                if (Directory.Exists(item))
+                catch (Exception e)
                 {
-                    CopyDir(item, destination + "\\" + temp);
+                    warn.Show();
+                    warn.Clear();
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                }
+            }
+            else if (entry.type == Entry.Type.File)
+            {
+                try
+                {
+                    FileInfo fi = (FileInfo)entry.GetInfoType();
+                    fi.Delete();
+                }
+                catch (Exception e)
+                {
+                    warn.Show();
+                    warn.Clear();
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
                 }
             }
         }
-        void RenameDir(string oldName, string newName)
+        public void Create(Entry entry, char type)
         {
-            DirectoryInfo directory = new DirectoryInfo(oldName);
-            string[] name = oldName.Split('\\');
-            string naming = null;
-            for (int i = 0; i < name.Length - 1; i++)
-            {
-                naming += '\\' + name[i];
-            }
-
-            directory.MoveTo($@"{naming}\{newName}");
-        }
-        void RenameFile(string oldName, string newName)
-        {
-            FileInfo info = new FileInfo(oldName);
-            string[] name = oldName.Split('\\');
-            string naming = null;
-            for (int i = 0; i < name.Length - 1; i++)
-            {
-                naming += '\\' + name[i];
-            }
-            info.MoveTo($@"{naming}\{newName}");
-        }
-        void Rename()
-        {
-
-        }
-        void RewriteFile(string oldName, string newName)
-        {
-            FileInfo info = new FileInfo(oldName);
-            string[] name = oldName.Split('\\');
-            string naming = null;
-            for (int i = 0; i < name.Length - 1; i++)
-            {
-                naming += '\\' + name[i];
-            }
-            info.MoveTo($@"{naming}\{newName}", true);
-        }
-        void Cut(string path)
-        {
-            if (Directory.Exists(path))
-            {
-                tempDirPath = path;
-            }
-            else if (File.Exists(path))
-            {
-                tempFilePath = path;
-            }
-        }
-        void Paste(string destination, char type)
-        {
+            Frame warn = new Frame(30, 30, 5, 60);
+            Frame readConsole = new Frame(30, 30, 5, 60);
+            warn.Coloring(Frame.Colorscheme.Warning);
+            readConsole.Coloring(Frame.Colorscheme.BIOS);
+            string name;
             switch (type)
             {
                 case 'D':
                 case 'd':
-                    CopyDir(tempDirPath, destination);
+                    readConsole.Show();
+                    readConsole.Clear();
+                    readConsole.SetName("Input Name");
+                    readConsole.SetColor(Frame.ColorsPreset.ContextNormal);
+                    readConsole.WriteText("".PadRight(readConsole.cols - 2, ' '));
+                    readConsole.SetCursorPosition(0, 0);
+                    name = Console.ReadLine();
+                    if (!Directory.Exists(entry.Path + '\\' + name))
+                    {
+                        try
+                        {
+                            DirectoryInfo di = new DirectoryInfo(entry.Path + '\\' + name);
+                            di.Create();
+                        }
+                        catch (Exception e)
+                        {
+                            warn.Show();
+                            warn.Clear();
+                            warn.WriteText(e.Message);
+                            Console.ReadKey(true);
+                        }
+
+                    }
+                    else
+                    {
+                        warn.Show();
+                        warn.Clear();
+                        warn.WriteText("Directory already exist.");
+                        Console.ReadKey(true);
+                    }
                     break;
                 case 'F':
                 case 'f':
-                    CopyFile(tempFilePath, destination);
+                    readConsole.Show();
+                    readConsole.Clear();
+                    readConsole.SetName("Input Name");
+                    readConsole.SetColor(Frame.ColorsPreset.ContextNormal);
+                    readConsole.WriteText("".PadRight(readConsole.cols - 2, ' '));
+                    readConsole.SetCursorPosition(0, 0);
+                    name = Console.ReadLine();
+                    if (!File.Exists(entry.Path + '\\' + name))
+                    {
+                        try
+                        {
+                            FileStream fs = File.Create(entry.Path + '\\' + name);
+                            fs.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            warn.Show();
+                            warn.Clear();
+                            warn.WriteText(e.Message);
+                            Console.ReadKey(true);
+                        }
+                    }
+                    else
+                    {
+                        warn.Show();
+                        warn.Clear();
+                        warn.WriteText("File already exist.");
+                        Console.ReadKey(true);
+                    }
                     break;
-                default:
-                    break;
+                default: break;
             }
         }
-        void Paste(string destination)
+        public void Move(Entry entry, string destinationPath)
         {
-            if (Directory.Exists(tempPath) & !Directory.Exists(destination))
+            Frame warn = new Frame(30, 30, 5, 60);
+            warn.Coloring(Frame.Colorscheme.Warning);
+            if (entry.type == Entry.Type.Directory)
             {
-                CopyDir(tempPath, destination);
+                try
+                {
+                    DirectoryInfo di = (DirectoryInfo)entry.GetInfoType();
+                    di.MoveTo(destinationPath);
+                }
+                catch (Exception e)
+                {
+                    warn.Show();
+                    warn.Clear();
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                }
             }
-            else if (File.Exists(tempPath) & !File.Exists(destination))
+            else if (entry.type == Entry.Type.File)
             {
+                try
+                {
+                    File.Move(entry.Path, destinationPath);
+                }
+                catch (Exception e)
+                {
+                    warn.Show();
+                    warn.Clear();
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                }
+            }
+        }
+        public void CopyDir(DirectoryInfo source, DirectoryInfo target)
+        {
+            Frame warn = new Frame(30, 30, 5, 60);
+            warn.Coloring(Frame.Colorscheme.Warning);
 
+            if (source.FullName == target.FullName)
+            {
+                warn.Show();
+                warn.Clear();
+                warn.WriteText("Пути совпадают");
+                Console.ReadKey(true);
             }
             else
             {
-                Console.Write("Bad Way");
-            }
-        }
-
-        void ReadCommand(string path)
-        {
-            string[] tempLine = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            string comand;      // = tempLine[0];
-            string target;    // = tempLine[1];
-            string attr = null;        // = tempLine[2];
-            if (tempLine.Length < 3)
-            {
-                comand = tempLine[0];
-                target = tempLine[1];
-            }
-            else
-            {
-                comand = tempLine[0];
-                target = tempLine[1];
-                attr = tempLine[2];
-            }
-            switch (comand)
-            {
-                case "cd":
+                if (Directory.Exists(target.FullName) == false)
+                {
+                    Directory.CreateDirectory(target.FullName);
+                }
+                foreach (FileInfo fi in source.GetFiles())
+                {
                     try
                     {
-                        string temp = ChangeDirectory(target, path);
-                        if (Directory.Exists(target))
-                        {
-                            //MyTree.CurrentCatalog = temp;
-                        }
+                        fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+
                     }
                     catch (Exception e)
                     {
-
+                        warn.Show();
+                        warn.Clear();
+                        warn.WriteText(e.Message);
+                        Console.ReadKey(true);
                     }
-                    break;
-                case "del":
-                    if (Directory.Exists(path + '\\' + target))
-                    {
-                        if (Directory.GetDirectories(path + '\\' + target) == Array.Empty<string>())
-                        {
-                            DeleteDir(path + '\\' + target);
-                        }
-                        if (!string.IsNullOrEmpty(attr) & attr == "-f")
-                        {
-                            DeleteCatalog(path + '\\' + target);
-                        }
-                    }
-                    else if (File.Exists(path + '\\' + target))
-                    {
-                        DeleteFile(path + '\\' + target);
-                    }
-                    else
-                    {
-                        Console.Write("Bad path");
-                    }
-                    break;
-                case "rename":
-                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        RenameDir(path + '\\' + target, attr);
-                    }
-                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        RenameFile(path + '\\' + target, attr);
-                    }
-                    else if (string.IsNullOrEmpty(attr))
-                    {
-                        Console.Write("Bad name");
-                    }
-                    else
-                    {
-                        Console.Write("Bad path");
-                    }
-                    break;
-                case "copy":
-                    if (Directory.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        if (Directory.Exists(attr))
-                        {
-                            Console.Write("Directory already exist");
-                        }
-                        else
-                        {
-                            tempDirPath = path + '\\' + target;
-                            CopyDir(path + '\\' + target, attr);
-                        }
-                    }
-                    else if (File.Exists(path + '\\' + target) & !string.IsNullOrEmpty(attr))
-                    {
-                        if (File.Exists(attr))
-                        {
-                            Console.Write("File already exist");
-                        }
-                        else
-                        {
-                            tempFilePath = path + '\\' + target;
-                            CopyFile(path + '\\' + target, attr);
-                        }
-                    }
-                    break;
-                default:
-                    Console.Write($"Command \"{comand}\" is not supported");
-                    break;
+                }
+                foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+                {
+                    DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
+                    CopyDir(diSourceSubDir, nextTargetSubDir);
+                }
             }
         }
     }

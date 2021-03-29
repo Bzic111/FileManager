@@ -6,10 +6,18 @@ namespace FileManager
 {
     class Frame
     {
+        public enum ControlType
+        {
+            ConsoleReader,
+            TabSelector,
+            Input,
+            OK
+        }
         public enum Colorscheme
         {
             Default,
-            BIOS
+            BIOS,
+            Warning
         }
         public enum ColorsPreset
         {
@@ -20,6 +28,7 @@ namespace FileManager
             Standart
         }
 
+        ControlType CType;
         Colorscheme Scheme;
         ConsoleColor NormalBackGround;              // = Black;
         ConsoleColor SelectedBackGround;            // = White;
@@ -30,23 +39,11 @@ namespace FileManager
         ConsoleColor SelectedContext;               //  = Red;
         ConsoleColor NormalContext;                 //  = Black;
 
-
-        int FrameRows; //42
-        int FrameCols; //74
-        int PageCount;
-        int FrameLeftRow;
-        int FrameLeftCol;
-        int FrameRightRow;
-        int FrameRightCol;
-        int FrameSubRow;
-        int FrameSubCol;
-
         public int StartCol;
         public int StartRow;
         public int rows;
         public int cols;
-        public List<Object> Lines;
-
+        public string FrameName = "No Name";
         char LeftUpCorner = '╔';
         char LeftDownCorner = '╚';
         char RightUpCorner = '╗';
@@ -54,10 +51,14 @@ namespace FileManager
         char Liner = '═';
         char Border = '║';
 
-        public Frame()
-        {
+        bool ReFresh;
+        int page;
+        int index;
+        Tree tree;
+        Comands comand;
+        public Entry entry;
+        public delegate void Controller();
 
-        }
         public Frame(int startCol, int startRow, int rws, int cls)
         {
             StartCol = startCol;
@@ -72,20 +73,33 @@ namespace FileManager
             {
                 Console.WindowHeight = startRow + rws + 8;
             }
-            Lines = new List<object>();
         }
-        public Frame(int frameRows, int frameCols)
+        public Frame(int startCol, int startRow, int rws, int cls, ControlType ctype, int frameIndex)
         {
-            FrameRows = frameRows;
-            FrameCols = frameCols;
-            Console.WindowHeight = frameRows + 8;
-            Console.WindowWidth = frameCols * 2 + 2;
+            CType = ctype;
+            StartCol = startCol;
+            StartRow = startRow;
+            rows = rws;
+            cols = cls;
+            if (Console.WindowWidth < startCol + cls)
+            {
+                Console.WindowWidth = startCol + cls;
+            }
+            if (Console.WindowHeight < startRow + rws + 8)
+            {
+                Console.WindowHeight = startRow + rws + 8;
+            }
         }
         public void Show()
         {
             SetColor(ColorsPreset.Normal);
+            this.WriteName();
             Console.SetCursorPosition(StartCol, StartRow);
             Console.Write($"{LeftUpCorner}".PadRight(cols - 1, Liner) + RightUpCorner);
+            if (!string.IsNullOrEmpty(FrameName))
+            {
+                WriteName();
+            }
             for (int i = 1; i < rows; i++)
             {
                 Console.SetCursorPosition(StartCol, StartRow + i);
@@ -95,187 +109,26 @@ namespace FileManager
             }
             Console.SetCursorPosition(StartCol, StartRow + rows);
             Console.Write($"{LeftDownCorner}".PadRight(cols - 1, Liner) + RightDownCorner);
-        }
-        void ShowLines()
-        {
-
-        }
-        public void ShowOne(int rows, int cols, bool sub = false)
-        {
-            Console.SetCursorPosition(0, 0);
-            string lineUp = "╔".PadRight(FrameCols * 2, '═') + "╗"; //"╦".PadRight(FrameWidth, '═') +
-            string border = "║";
-            string lineDown = "╚".PadRight(FrameCols * 2, '═') + "╝"; //"╩".PadRight(FrameWidth, '═') +
-            Console.Write(lineUp);
-            for (int i = 1; i < rows; i++)
-            {
-                Console.SetCursorPosition(0, i);
-                Console.Write(border);
-                Console.SetCursorPosition(FrameCols * 2, i);
-                Console.Write($"{border}");
-            }
-            Console.SetCursorPosition(0, rows);
-            Console.Write(lineDown);
-            if (sub)
-            {
-                int subPositionV = rows + 1;
-                ShowSub(subPositionV, cols);
-            }
-            FrameLeftRow = 1;
-            FrameLeftCol = 1;
-        }
-        public void ShowTwo(int rows, int cols, bool sub = false)
-        {
-            Console.SetCursorPosition(0, 0);
-            string lineUp = "╔".PadRight(FrameCols, '═') + "╦".PadRight(FrameCols, '═') + "╗";
-            string border = "║";
-            string lineDown = "╚".PadRight(FrameCols, '═') + "╩".PadRight(FrameCols, '═') + "╝";
-            Console.Write(lineUp);
-            for (int i = 1; i < rows; i++)
-            {
-                Console.SetCursorPosition(0, i);
-                Console.Write(border);
-                Console.SetCursorPosition(FrameCols - 1, i);
-                Console.Write($" {border} ");
-                Console.SetCursorPosition(FrameCols * 2, i);
-                Console.Write(border);
-            }
-            Console.SetCursorPosition(0, rows);
-            Console.Write(lineDown);
-            if (sub)
-            {
-                ShowSub(rows + 1, cols);
-            }
-            FrameLeftRow = 1;
-            FrameLeftCol = 1;
-            FrameRightRow = 1;
-            FrameRightCol = FrameCols + 2;
-        }
-        void ShowSub(int rows, int cols)
-        {
-            string lineUp = "╔".PadRight(cols * 2, '═') + "╗";
-            string border = "║";
-            string lineDown = "╚".PadRight(cols * 2, '═') + "╝";
-
-            Console.SetCursorPosition(0, rows);
-            Console.Write(lineUp);
-            for (int i = rows + 1; i < rows + 4; i++)
-            {
-                Console.SetCursorPosition(0, i);
-                Console.Write(border);
-                Console.SetCursorPosition(cols * 2, i);
-                Console.Write(border);
-            }
-            Console.SetCursorPosition(0, rows + 4);
-            Console.Write(lineDown);
-            FrameSubRow = rows + 1;
-            FrameSubCol = 1;
-        }
-
-        public void WriteText(string str, bool nextLine = true, int col = 0, int row = 0)
-        {
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
-            Console.Write(str.PadRight(cols - 2, ' '));
-            if (nextLine)
-            {
-                Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
-            }
-            else
-            {
-                Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 2);
-            }
-        }
-        public void WriteText(string str, int col = 0, int row = 0)
-        {
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
-            Console.Write(str.PadRight(cols - 2, ' '));
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            Clear();
         }
         public void Clear()
         {
+            SetColor(ColorsPreset.Normal);
             for (int i = 0; i < rows; i++)
             {
-                Console.SetCursorPosition(StartCol+1, StartRow + i);
-                Console.Write("".PadRight(cols-2, ' '));
+                Console.SetCursorPosition(StartCol + 1, StartRow + i);
+                Console.Write("".PadRight(cols - 2, ' '));
             }
         }
-        public void Write(string str)
+        public void Refresh()
         {
-            Console.Write(str);
-        }
-        public void SetCursorPosition(int col, int row)
-        {
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
-        }
-        public void Message(string str, Frame fr)
-        {
-            fr.WriteText(str, 0, 0);
-        }
-
-        public void Message(string str, char frame)
-        {
-            int row;// = Console.WindowHeight / 2 - 4;
-            int col;// = FrameCols / 2;
-            switch (frame)
-            {
-                case 'L':
-                case 'l':
-                    Console.SetCursorPosition(FrameLeftCol, FrameLeftRow);
-                    Console.Write(str);
-                    break;
-                case 'R':
-                case 'r':
-                    Console.SetCursorPosition(FrameRightCol, FrameRightRow);
-                    Console.Write(str);
-                    break;
-                case 'S':
-                case 's':
-                    Console.SetCursorPosition(FrameSubCol, FrameSubRow);
-                    Console.Write(str);
-                    break;
-                case 'N':
-                case 'n':
-                    row = Console.WindowHeight / 2 - 4;
-                    col = FrameCols / 2;
-                    Console.SetCursorPosition(col, row);
-                    Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("╔".PadRight(FrameCols, '═') + "╗");
-                    for (int i = row + 1; i < row + 7; i++)
-                    {
-                        Console.SetCursorPosition(col, i);
-                        Console.Write("║".PadRight(FrameCols, ' ') + "║");
-                    }
-                    Console.SetCursorPosition(col, row + 7);
-                    Console.Write("╚".PadRight(FrameCols, '═') + "╝");
-                    Console.SetCursorPosition(col + 1, row + 1);
-                    Console.Write(str);
-                    break;
-                case 'W':
-                case 'w':
-                    row = Console.WindowHeight / 2 - 4;
-                    col = FrameCols / 2;
-                    Console.SetCursorPosition(col, row);
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("╔".PadRight(FrameCols, '═') + "╗");
-                    for (int i = row + 1; i < row + 7; i++)
-                    {
-                        Console.SetCursorPosition(col, i);
-                        Console.Write("║".PadRight(FrameCols, ' ') + "║");
-                    }
-                    Console.SetCursorPosition(col, row + 7);
-                    Console.Write("╚".PadRight(FrameCols, '═') + "╝");
-                    Console.SetCursorPosition(col + 1, row + 1);
-                    Console.Write(str);
-                    break;
-                default:
-                    break;
-            }
-
+            Show();
+            Clear();
+            WriteName();
         }
         public void Coloring(Colorscheme scheme)
         {
+            Scheme = scheme;
             switch (scheme)
             {
                 case Colorscheme.Default:
@@ -296,6 +149,16 @@ namespace FileManager
                     SelectedText = ConsoleColor.White;
                     ContexMenuNormalBackGround = ConsoleColor.Yellow;
                     ContexMenuSelectedBackGround = ConsoleColor.Red;
+                    SelectedContext = ConsoleColor.Yellow;
+                    NormalContext = ConsoleColor.Black;
+                    break;
+                case Colorscheme.Warning:
+                    NormalBackGround = ConsoleColor.Red;
+                    SelectedBackGround = ConsoleColor.White;
+                    NormalText = ConsoleColor.Yellow;
+                    SelectedText = ConsoleColor.Red;
+                    ContexMenuNormalBackGround = ConsoleColor.Yellow;
+                    ContexMenuSelectedBackGround = ConsoleColor.DarkRed;
                     SelectedContext = ConsoleColor.Yellow;
                     NormalContext = ConsoleColor.Black;
                     break;
@@ -329,6 +192,421 @@ namespace FileManager
                 default:
                     break;
             }
+
+        }
+        public void SetCursorPosition(int col, int row)
+        {
+            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+        }
+        public void SetName(string str)
+        {
+            if (str.Length < cols - 4)
+            {
+                FrameName = str;
+            }
+            else
+            {
+                string ready = $"{str.Split('\\')[0]}...\\{str.Split('\\')[^1]}";
+                FrameName = ready;
+            }
+        }
+        public void Write(string str)
+        {
+            Console.Write(str);
+        }
+        public void WriteText(string str, int col = 0, int row = 0)
+        {
+            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            if (str.Length <= cols)
+            {
+                Console.Write(str.PadRight(cols - 2, ' '));
+            }
+            else
+            {
+                int counter = 0;
+                int lines = 0;
+                do
+                {
+                    Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1 + lines);
+                    for (int i = 0; i < cols - 2 & counter < str.Length; i++, counter++)
+                    {
+                        Console.Write(str[counter]);
+                    }
+                    lines++;
+                } while (counter < str.Length & lines < rows);
+            }
+            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+        }
+        public void WriteName()
+        {
+            Console.SetCursorPosition(StartCol + 2, StartRow);
+            Console.Write(FrameName.PadRight(cols - 3, Liner));
+        }
+
+        void ConsoleReader()
+        {
+            StringBuilder consoleReader = new StringBuilder();
+            List<string> memory = new List<string>();
+            bool reader = true;
+            int memIndex = memory.Count - 1;
+            string consoleLine = "";
+            int cursorStartCol = tree.Pages[page][index].Path.Length + 1;
+            Console.SetCursorPosition(0, 43);
+            Console.Write(tree.Pages[page][index].Path + ">".PadRight(50, ' '));
+            Console.SetCursorPosition(0, 44);
+            Console.Write("".PadRight(50, ' '));
+            Console.Write(consoleLine);
+            Console.CursorVisible = true;
+            Console.SetCursorPosition(cursorStartCol, 43);
+            consoleReader.Clear();
+            do
+            {
+                var sub = Console.ReadKey(true);
+                switch (sub.Key)
+                {
+                    case ConsoleKey.Tab:
+                    case ConsoleKey.Escape:
+                        reader = false;
+                        break;
+                    case ConsoleKey.UpArrow:
+                        if (memory.Count > 0)
+                        {
+                            consoleReader.Clear();
+                            if (memIndex < memory.Count - 1)
+                            {
+                                memIndex++;
+                                consoleLine = memory[memIndex].ToString();
+                            }
+                            consoleReader.Append(consoleLine);
+                            Console.SetCursorPosition(cursorStartCol, 43);
+                            Console.WriteLine(consoleLine.PadRight(Console.WindowWidth - Console.CursorLeft - 1, ' '));
+                            Console.SetCursorPosition(consoleLine.Length + cursorStartCol, 43);
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (memory.Count > 0)
+                        {
+                            consoleReader.Clear();
+                            if (memIndex > 0)
+                            {
+                                memIndex--;
+                                consoleLine = memory[memIndex].ToString();
+                            }
+                            consoleReader.Append(consoleLine);
+                            Console.SetCursorPosition(cursorStartCol, 43);
+                            Console.WriteLine(consoleLine.PadRight(Console.WindowWidth - Console.CursorLeft - 1, ' '));
+                            Console.SetCursorPosition(consoleLine.Length + cursorStartCol, 43);
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        consoleLine = consoleReader.ToString();
+                        if (!string.IsNullOrEmpty(consoleLine))
+                        {
+                            memory.Add(consoleLine);
+                        }
+                        comand.Reader(consoleLine, ref tree, tree.Pages[page][index], out ReFresh);
+                        consoleReader.Clear();
+                        consoleLine = consoleReader.ToString();
+                        Console.SetCursorPosition(cursorStartCol, 43);
+                        Console.WriteLine(consoleLine.PadRight(Console.WindowWidth - Console.CursorLeft - 1, ' '));
+                        Console.SetCursorPosition(consoleLine.Length + cursorStartCol, 43);
+                        break;
+                    case ConsoleKey.Backspace:
+                        if (!string.IsNullOrEmpty(consoleLine))
+                        {
+                            consoleLine = consoleReader.Remove(consoleLine.Length - 1, 1).ToString();
+                        }
+                        Console.SetCursorPosition(cursorStartCol, 43);
+                        Console.WriteLine(consoleLine.PadRight(Console.WindowWidth - Console.CursorLeft - 1, ' '));
+                        Console.SetCursorPosition(consoleLine.Length + cursorStartCol, 43);
+                        break;
+                    default:
+                        if ((sub.KeyChar >= '\u0020' & sub.KeyChar <= '\u007A') | (sub.KeyChar >= '\u0430' & sub.KeyChar <= '\u044F'))
+                        {
+                            consoleReader.Append(sub.KeyChar);
+                            consoleLine = consoleReader.ToString();
+                            Console.SetCursorPosition(cursorStartCol, 43);
+                            Console.WriteLine(consoleLine.PadRight(Console.WindowWidth - Console.CursorLeft - 1, ' '));
+                            Console.SetCursorPosition(consoleLine.Length + cursorStartCol, 43);
+                        }
+                        break;
+                }
+            } while (reader);
+        }
+        void TabSelector(ref Dictionary<string, Frame> frames, out int outIndex)
+        {
+            outIndex = 0;
+            DirectoryInfo di;
+            FileInfo fi;
+            bool Cycle = true;
+            int liner = 0;
+            foreach (var item in tree.Pages[page])
+            {
+                WriteText(item.Name, 0, liner++);
+            }
+            do
+            {
+                liner = 0;
+                SetName($"╣{tree.Pages[page][index].Parent} | Page {page + 1}/{tree.Pages.Count}╠");
+                WriteName();
+                Console.CursorVisible = false;
+                SetColor(Frame.ColorsPreset.Selected);
+                WriteText(tree.Pages[page][index].Name, 0, index);
+                var key = Console.ReadKey();
+                SetColor(Frame.ColorsPreset.Normal);
+                switch (key.Key)
+                {
+                    case ConsoleKey.Backspace:
+                        tree.ChangeDirectory(tree.Pages[0][0].Parent);
+                        page = 0;
+                        index = 0;
+                        Clear();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        if (page == 0 & index == 0)
+                        {
+                            tree.ChangeDirectory(tree.Pages[page][index].Parent);
+                        }
+                        else
+                        {
+                            tree.ChangeDirectory(tree.Pages[page][index].Path + '\\' + tree.Pages[page][index].Name);
+                        }
+                        page = 0;
+                        index = 0;
+                        Clear();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        outIndex = 1;
+                        Cycle = false;
+                        break;
+
+                    case ConsoleKey.PageUp:
+                        if (page > 0)
+                        {
+                            page--;
+                            index = 0;
+                        }
+                        Clear();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+                    case ConsoleKey.PageDown:
+                        if (page < tree.Pages.Count - 1)
+                        {
+                            page++;
+                            index = 0;
+                        }
+                        Clear();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+                    case ConsoleKey.End:
+                        page = tree.Pages.Count - 1;
+                        index = tree.Pages[page].Count - 1;
+                        Clear();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+                    case ConsoleKey.Home:
+                        page = 0;
+                        index = 0;
+                        Clear();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+
+                    case ConsoleKey.UpArrow:
+                        WriteText(tree.Pages[page][index].Name, 0, index);
+                        if (index > 0)
+                        {
+                            index--;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        WriteText(tree.Pages[page][index].Name, 0, index);
+                        if (index < tree.Pages[page].Count - 1)
+                        {
+                            index++;
+                        }
+                        break;
+
+                    case ConsoleKey.LeftArrow:
+                        break;
+                    case ConsoleKey.RightArrow:
+                        break;
+
+                    case ConsoleKey.Insert:
+                        frames.GetValueOrDefault("question").SetName("Creating");
+                        frames.GetValueOrDefault("question").Show();
+                        frames.GetValueOrDefault("question").WriteText($"Create Directory or File? [D/F] ?");
+                        var q = Console.ReadKey(true);
+                        string name;
+                        switch (q.Key)
+                        {
+                            case ConsoleKey.D:
+                                frames.GetValueOrDefault("readConsole").SetName("Input Name");
+                                frames.GetValueOrDefault("readConsole").Show();
+                                frames.GetValueOrDefault("readConsole").SetColor(Frame.ColorsPreset.ContextNormal);
+                                frames.GetValueOrDefault("readConsole").WriteText("".PadRight(frames.GetValueOrDefault("readConsole").cols - 2, ' '));
+                                frames.GetValueOrDefault("readConsole").SetCursorPosition(0, 0);
+                                name = Console.ReadLine();
+                                if (!Directory.Exists(tree.Pages[page][index].Path + '\\' + name))
+                                {
+                                    try
+                                    {
+                                        di = new DirectoryInfo(tree.Pages[page][index].Path + '\\' + name);
+                                        di.Create();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        frames.GetValueOrDefault("warn").Show();
+                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
+                                        Console.ReadKey(true);
+                                    }
+
+                                }
+                                else
+                                {
+                                    frames.GetValueOrDefault("warn").Show();
+                                    frames.GetValueOrDefault("warn").WriteText("Directory already exist.");
+                                    Console.ReadKey(true);
+                                }
+                                break;
+                            case ConsoleKey.F:
+                                frames.GetValueOrDefault("readConsole").SetName("Input Name");
+                                frames.GetValueOrDefault("readConsole").Show();
+                                frames.GetValueOrDefault("readConsole").SetColor(Frame.ColorsPreset.ContextNormal);
+                                frames.GetValueOrDefault("readConsole").WriteText("".PadRight(frames.GetValueOrDefault("readConsole").cols - 2, ' '));
+                                frames.GetValueOrDefault("readConsole").SetCursorPosition(0, 0);
+                                name = Console.ReadLine();
+                                if (!File.Exists(tree.Pages[page][index].Path + '\\' + name))
+                                {
+                                    try
+                                    {
+                                        FileStream fs = File.Create(tree.Pages[page][index].Path + '\\' + name);
+                                        fs.Close();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        frames.GetValueOrDefault("warn").Show();
+                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
+                                        Console.ReadKey(true);
+                                    }
+                                }
+                                else
+                                {
+                                    frames.GetValueOrDefault("warn").Show();
+                                    frames.GetValueOrDefault("warn").WriteText("File already exist.");
+                                    Console.ReadKey(true);
+                                }
+                                break;
+                            default: break;
+                        }
+                        tree.ReFresh();
+                        page = 0;
+                        index = 0;
+                        Refresh();
+                        foreach (var item in tree.Pages[page])
+                        {
+                            WriteText(item.Name, 0, liner++);
+                        }
+                        break;
+                    case ConsoleKey.Delete:
+                        frames.GetValueOrDefault("question").SetName("Deleting");
+                        frames.GetValueOrDefault("question").Show();
+                        frames.GetValueOrDefault("question").WriteText($"Delete {tree.Pages[page][index].Name} Y/N ?");
+                        q = Console.ReadKey(true);
+                        switch (q.Key)
+                        {
+                            case ConsoleKey.Y:
+                                if (tree.Pages[page][index].type == Entry.Type.Directory)
+                                {
+                                    try
+                                    {
+                                        di = (DirectoryInfo)tree.Pages[page][index].GetInfoType();
+                                        di.Delete(true);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        frames.GetValueOrDefault("warn").Show();
+                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
+                                        Console.ReadKey(true);
+                                    }
+                                }
+                                else if (tree.Pages[page][index].type == Entry.Type.File)
+                                {
+                                    try
+                                    {
+                                        fi = (FileInfo)tree.Pages[page][index].GetInfoType();
+                                        fi.Delete();
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        frames.GetValueOrDefault("warn").Show();
+                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
+                                        Console.ReadKey(true);
+                                    }
+                                }
+                                tree.ReFresh();
+                                page = 0;
+                                index = 0;
+                                Refresh();
+                                foreach (var item in tree.Pages[page])
+                                {
+                                    WriteText(item.Name, 0, liner++);
+                                }
+                                break;
+                            case ConsoleKey.N:
+                            default:
+                                break;
+                        }
+                        break;
+                    case ConsoleKey.Applications:
+                        Console.SetCursorPosition(0, 43);
+                        Console.WriteLine(tree.Pages[page][index].Path);
+                        Console.WriteLine(tree.Pages[page][index].Parent);
+                        break;
+
+                    case ConsoleKey.F1:
+                        frames.GetValueOrDefault("info").Show();
+                        break;
+                    case ConsoleKey.F2:
+                        break;
+                    case ConsoleKey.F3:
+                        break;
+                    case ConsoleKey.F4:
+                        break;
+                    case ConsoleKey.Tab:
+                        outIndex = 2;
+                        Cycle = false;
+                        break;
+                    default:
+                        break;
+                }
+            } while (Cycle);
+        }
+        void Input()
+        {
+
+        }
+        void OK()
+        {
 
         }
     }

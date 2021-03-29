@@ -8,7 +8,10 @@ namespace FileManager
 {
     class Tree
     {
-        public string CurrentCatalog { get; set; }
+        public List<Entry> Entryes;
+        public List<List<Entry>> Pages;
+        public string CurrentPath;
+        string CurrentDrive;
         public List<string> Roots { get; private set; }
         List<string> Drives;
         public Tree() => SetRoots();
@@ -24,92 +27,84 @@ namespace FileManager
             }
             Roots = Drives;
         }
-        public List<Entry> GetEntryList(string path)
+        void GetEntryList(string path)
         {
-            string[] dirs = Directory.GetDirectories(path);
-            string[] files = Directory.GetFiles(path);
-            Array.Sort(dirs);
-            Array.Sort(files);
             List<Entry> entryes = new List<Entry>();
-            for (int i = 0; i < dirs.Length; i++)
+            try
             {
-                entryes.Add(new Entry(dirs[i], Entry.Type.Directory));
+                string[] dirs = Directory.GetDirectories(path);
+                string[] files = Directory.GetFiles(path);
+                string[] pather = path.Split('\\', StringSplitOptions.RemoveEmptyEntries);
+
+                Array.Sort(dirs);
+                Array.Sort(files);
+                entryes.Add(new Entry(path, Entry.Type.Directory));
+                entryes[0].Name = pather[^1];
+                entryes[0].Path = path;
+                foreach (var item in dirs)
+                {
+                    entryes.Add(new Entry(item, Entry.Type.Directory));
+                }
+                foreach (var item in files)
+                {
+                    entryes.Add(new Entry(item, Entry.Type.File));
+                }
+                CurrentPath = path;
+                Entryes = entryes;
             }
-            for (int i = 0; i < files.Length; i++)
+            catch (UnauthorizedAccessException e)
             {
-                entryes.Add(new Entry(files[i], Entry.Type.File));
+                Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
+                Error.SetName("Acces Denied");
+                Error.Coloring(Frame.Colorscheme.Warning);
+                Error.SetColor(Frame.ColorsPreset.Normal);
+                Error.Show();
+                Error.Clear();
+                Error.WriteName();
+                Error.WriteText(e.Message);
+                Console.ResetColor();
+                Console.ReadKey(true);
             }
-            return entryes;
         }
-        public List<List<Entry>> ToPages(List<Entry> Entryes)
+        void GetPages(List<Entry> Entryes)
         {
-            List<List<Entry>> Pages = new List<List<Entry>>();
+            List<List<Entry>> pages = new List<List<Entry>>();
             for (int i = 0, counter = 0; counter < Entryes.Count; i++)
             {
-                Pages.Add(new List<Entry>());
+                pages.Add(new List<Entry>());
                 for (int j = 0; j < 40 & counter < Entryes.Count; j++, counter++)
                 {
-                    Pages[i].Add(Entryes[counter]);
+                    pages[i].Add(Entryes[counter]);
                 }
             }
-            return Pages;
+            Pages = pages;
         }
-
-
-
-        public void ToArray(List<Entry> entryes)
+        public void ReFresh()
         {
-            StringBuilder sb = new StringBuilder();
+            GetEntryList(CurrentPath);
+            GetPages(Entryes);
+        }
+        public void ChangeDirectory(string path)
+        {
+            try
+            {
+                GetEntryList(path);
+                GetPages(Entryes);
+            }
+            catch (Exception e)
+            {
+                Frame Error = new Frame(25, 25, 3, e.Message.Length + 2);
+                Error.SetName("Error");
+                Error.Coloring(Frame.Colorscheme.Warning);
+                Error.SetColor(Frame.ColorsPreset.Selected);
+                Error.Show();
+                Error.Clear();
+                Error.WriteName();
+                Error.WriteText(e.Message);
+                Console.ReadKey(true);
+                Console.ResetColor();
+            }
+        }
 
-            for (int i = 0; i < entryes.Count; i++)
-            {
-                if (entryes[i].type == Entry.Type.Directory)
-                {
-                    sb.Append($"╚╦{entryes[i].Name}".PadRight(Console.WindowWidth, ' ').Remove(Console.WindowWidth - 5));
-                }
-                else if (entryes[i].type == Entry.Type.File)
-                {
-                    sb.Append($" ╟─{entryes[i].Name}".PadRight(Console.WindowWidth, ' ').Remove(Console.WindowWidth - 5));
-                }
-            }
-        }
-        public void InsertEntryList(string path, int index, List<Entry> entryes)
-        {
-            string[] dirs = Directory.GetDirectories(path);
-            string[] files = Directory.GetFiles(path);
-            Array.Sort(dirs);
-            Array.Sort(files);
-            for (int i = 0; i < dirs.Length; i++)
-            {
-                entryes.Insert(index, new Entry(dirs[i], Entry.Type.Directory));
-            }
-            for (int i = 0; i < files.Length; i++)
-            {
-                entryes.Insert(index, new Entry(files[i], Entry.Type.File));
-            }
-        }
-        public string[] FrameFormat(List<Entry> lst, int StartIndex)
-        {
-            string[] result = new string[40];
-            for (int i = StartIndex; i < result.Length & i < lst.Count; i++)
-            {
-                if (i == lst.Count - 1 & i == result.Length)
-                {
-                    for (; i < result.Length; i++)
-                    {
-                        result[i] = "".PadRight(73, ' ');
-                    }
-                }
-                if (lst[i].type == Entry.Type.Directory)
-                {
-                    result[i] = lst[i].Name.PadRight(38, ' ').Remove(37) + lst[i].Extension;
-                }
-                else if (lst[i].type == Entry.Type.File)
-                {
-                    result[i] = lst[i].Name.PadRight(38, ' ').Remove(37) + lst[i].Extension.PadRight(11, ' ').Remove(10) + lst[i].Size;
-                }
-            }
-            return result;
-        }
     }
 }

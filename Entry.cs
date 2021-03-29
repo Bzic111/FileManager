@@ -22,13 +22,14 @@ namespace FileManager
         public string Name;
         public string Path;
         public Type type;
+        DirectoryInfo DI;
+        FileInfo FI;
         public string Extension;
         public string Size;
         public string ShortInfo;
         public string FullInfo;
         public string LastWrite;
         public bool Visible = false;
-
         public List<Entry> Catalog;
 
         public Entry()
@@ -40,15 +41,15 @@ namespace FileManager
 
             Path = path;
             type = t;
-            Name = path.Split('\\')[^1];
+            Name = path.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1];
             if (type == Type.File)
             {
-                FileInfo fi = new FileInfo(path);
-                long temp = fi.Length;
-                Extension = fi.Extension;
-                LastWrite = fi.LastWriteTime.ToString();
+                FI = new FileInfo(path);
+                long temp = FI.Length;
+                Extension = FI.Extension;
+                LastWrite = FI.LastWriteTime.ToString();
                 FileAttributes fa = File.GetAttributes(path);
-                FullInfo = $"{Extension} {fi.Attributes} {LastWrite}";
+                FullInfo = $"{Extension} {FI.Attributes} {LastWrite}";
                 if (temp < Kbyte)
                 {
                     Size = temp.ToString() + " b";
@@ -68,17 +69,42 @@ namespace FileManager
             }
             else if (type == Type.Directory)
             {
+                DI = new DirectoryInfo(path);
                 LastWrite = Directory.GetLastWriteTime(path).ToString();
                 Extension = "Directory";
                 Size = "".PadRight(12, ' ');
-                DirectoryInfo di = new DirectoryInfo(path);
-                Path = di.Parent.ToString();
+                if (path.Split('\\', StringSplitOptions.RemoveEmptyEntries)[0] != Name)
+                {
+                    Path = DI.Parent.ToString();
+                }
             }
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
-            Parent = Directory.GetParent(path).FullName;
+            string[] tempS = path.Split('\\');
+            //Parent = tempS[0] + '\\';
+            for (int i = 0; i < tempS.Length - 1; i++)
+            {
+                Parent += tempS[i];
+                if (i == 0 | i < tempS.Length - 2)
+                {
+                    Parent += '\\';
+                }
+            }
         }
-        void GetName() => Console.Write(Name);
-        string GetPath() => Path;
+        public Object GetInfoType()
+        {
+            if (this.type == Type.Directory)
+            {
+                return DI;
+            }
+            else if (this.type == Type.File)
+            {
+                return FI;
+            }
+            return null;
+        }
+        public void WriteName() => Console.Write(Name);
+        public void WritePath() => Console.Write(Path);
+        public void WriteParent() => Console.Write(Parent);
         public string GetParent() => Parent;
+
     }
-}
