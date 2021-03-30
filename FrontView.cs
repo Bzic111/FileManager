@@ -116,6 +116,7 @@ namespace FileManager
             SetColor(ColorsPreset.Normal);
             Com = new Comands();
         }
+
         public void ShowFrame()
         {
             // ╔0═74╦75═149╗150
@@ -130,30 +131,6 @@ namespace FileManager
                 Console.WriteLine(border);
             }
             Console.WriteLine(lineDown);
-        }
-        public void ShowContext(Dictionary<string, Comands.Comand> Cmds, int top, int left)
-        {
-
-            int currentLeft = left;
-            int currentTop;// = top + 2;
-            string[] keys = new string[Cmds.Count];
-            Cmds.Keys.CopyTo(keys, 0);
-            if (top > 40 - Cmds.Count)
-            {
-                currentTop = top - Cmds.Count;
-            }
-            else
-            {
-                currentTop = top + 2;
-            }
-            for (int i = 0; i < Cmds.Count; i++)
-            {
-                SetColor(ColorsPreset.ContextNormal);
-                Console.SetCursorPosition(currentLeft + 10, currentTop + i);
-                Console.Write(keys[i]);
-            }
-            SetColor(ColorsPreset.Normal);
-            Console.SetCursorPosition(currentLeft, currentTop);
         }
         public void SelectedString(int left, int top, int index)
         {
@@ -341,7 +318,30 @@ namespace FileManager
             return result;
         }
 
+        //public void ShowContext(Dictionary<string, Comands.Comand> Cmds, int top, int left)
+        //{
 
+        //    int currentLeft = left;
+        //    int currentTop;// = top + 2;
+        //    string[] keys = new string[Cmds.Count];
+        //    Cmds.Keys.CopyTo(keys, 0);
+        //    if (top > 40 - Cmds.Count)
+        //    {
+        //        currentTop = top - Cmds.Count;
+        //    }
+        //    else
+        //    {
+        //        currentTop = top + 2;
+        //    }
+        //    for (int i = 0; i < Cmds.Count; i++)
+        //    {
+        //        SetColor(ColorsPreset.ContextNormal);
+        //        Console.SetCursorPosition(currentLeft + 10, currentTop + i);
+        //        Console.Write(keys[i]);
+        //    }
+        //    SetColor(ColorsPreset.Normal);
+        //    Console.SetCursorPosition(currentLeft, currentTop);
+        //}
 
 
     }

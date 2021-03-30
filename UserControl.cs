@@ -260,163 +260,163 @@ namespace FileManager
         //        }
         //    } while (Cycle);
         //}
-        public void OneTab(List<List<Entry>> Pages, out Entry entr)
-        {
-            entr = Pages[0][0];
-            bool Cycle = true;
-            int Page = 0;
-            int index = 0;
-            int LastPage = Pages.Count - 1;
-            string CurrentCatalog = Pages[0][0].Parent;
+        //public void OneTab(List<List<Entry>> Pages, out Entry entr)
+        //{
+        //    entr = Pages[0][0];
+        //    bool Cycle = true;
+        //    int Page = 0;
+        //    int index = 0;
+        //    int LastPage = Pages.Count - 1;
+        //    string CurrentCatalog = Pages[0][0].Parent;
 
-            List<Entry> tempEntryes;
-            fr.SetColor(Frame.ColorsPreset.Normal);
-            int lineCount = 0;
-            foreach (var item in Pages[Page])
-            {
-                fr.WriteText(item.Name, 0, lineCount++);
-            }
-            MyTree.CurrentCatalog = null;
+        //    List<Entry> tempEntryes;
+        //    fr.SetColor(Frame.ColorsPreset.Normal);
+        //    int lineCount = 0;
+        //    foreach (var item in Pages[Page])
+        //    {
+        //        fr.WriteText(item.Name, 0, lineCount++);
+        //    }
+        //    MyTree.CurrentCatalog = null;
 
-            do
-            {
-                fr.SetColor(Frame.ColorsPreset.Normal);
-                fr.WriteText(Pages[Page][index].Name, 0, index);
+        //    do
+        //    {
+        //        fr.SetColor(Frame.ColorsPreset.Normal);
+        //        fr.WriteText(Pages[Page][index].Name, 0, index);
 
-                foreach (var item in Pages[Page])
-                {
-                    fr.WriteText(item.Name, 0, index);
-                }
+        //        foreach (var item in Pages[Page])
+        //        {
+        //            fr.WriteText(item.Name, 0, index);
+        //        }
 
-                fr.SetColor(Frame.ColorsPreset.Selected);
-                fr.WriteText(Pages[Page][index].Name, 0, index);
+        //        fr.SetColor(Frame.ColorsPreset.Selected);
+        //        fr.WriteText(Pages[Page][index].Name, 0, index);
 
-                fr.SetColor(Frame.ColorsPreset.ContextNormal);
-                Console.SetCursorPosition(3, 0);
-                Console.Write($"Page = {Page}/{Pages.Count}");
+        //        fr.SetColor(Frame.ColorsPreset.ContextNormal);
+        //        Console.SetCursorPosition(3, 0);
+        //        Console.Write($"Page = {Page}/{Pages.Count}");
 
-                fr.SetColor(Frame.ColorsPreset.Normal);
+        //        fr.SetColor(Frame.ColorsPreset.Normal);
 
-                switch (Console.ReadKey().Key)
-                {
-                    case ConsoleKey.Backspace:
-                        break;
-                    case ConsoleKey.Tab:
-                        entr = Pages[Page][index];
+        //        switch (Console.ReadKey().Key)
+        //        {
+        //            case ConsoleKey.Backspace:
+        //                break;
+        //            case ConsoleKey.Tab:
+        //                entr = Pages[Page][index];
                         
-                        break;
+        //                break;
 
-                    case ConsoleKey.Enter:
-                        if (Pages[Page][index].type == Entry.Type.Directory)
-                        {
-                            List<Entry> InEntry = new List<Entry>();
-                            List<List<Entry>> InPages = new List<List<Entry>>();
-                            InEntry = MyTree.GetEntryList(Pages[Page][index].Path + '\\' + Pages[Page][index].Name);
-                            InPages = MyTree.ToPages(InEntry);
-                            UserControl uc = new UserControl(MyTree, fr);
-                            uc.OneTab(InPages,out entr);
-                        }
-                        fr.Clear();
-                        lineCount = 0;
-                        foreach (var item in Pages[Page])
-                        {
-                            fr.WriteText(item.Name, 0, lineCount++);
-                        }
-                        break;
-                    case ConsoleKey.Escape:
-                        fr.Clear();
-                        Cycle = false;
-                        break;
+        //            case ConsoleKey.Enter:
+        //                if (Pages[Page][index].type == Entry.Type.Directory)
+        //                {
+        //                    List<Entry> InEntry = new List<Entry>();
+        //                    List<List<Entry>> InPages = new List<List<Entry>>();
+        //                    InEntry = MyTree.GetEntryList(Pages[Page][index].Path + '\\' + Pages[Page][index].Name);
+        //                    InPages = MyTree.ToPages(InEntry);
+        //                    UserControl uc = new UserControl(MyTree, fr);
+        //                    uc.OneTab(InPages,out entr);
+        //                }
+        //                fr.Clear();
+        //                lineCount = 0;
+        //                foreach (var item in Pages[Page])
+        //                {
+        //                    fr.WriteText(item.Name, 0, lineCount++);
+        //                }
+        //                break;
+        //            case ConsoleKey.Escape:
+        //                fr.Clear();
+        //                Cycle = false;
+        //                break;
 
-                    case ConsoleKey.PageUp:
-                        if (Page > 0)
-                        {
-                            Page--;
-                            index = 0;
-                            fr.Clear();
-                            lineCount = 0;
-                            foreach (var item in Pages[Page])
-                            {
-                                fr.WriteText(item.Name, 0, lineCount++);
-                            }
-                        }
-                        break;
-                    case ConsoleKey.PageDown:
-                        if (Page < LastPage)
-                        {
-                            Page++;
-                            index = 0;
-                            fr.Clear();
-                            lineCount = 0;
-                            foreach (var item in Pages[Page])
-                            {
-                                fr.WriteText(item.Name, 0, lineCount++);
-                            }
-                        }
-                        break;
-                    case ConsoleKey.Home:
-                        if (Page > 0)
-                        {
-                            Page = 0;
-                            index = 0;
-                            lineCount = 0;
-                            foreach (var item in Pages[Page])
-                            {
-                                fr.WriteText(item.Name, 0, lineCount++);
-                            }
-                        }
-                        break;
-                    case ConsoleKey.End:
-                        if (Page < LastPage)
-                        {
-                            Page = LastPage;
-                            index = 0;
-                            foreach (var item in Pages[Page])
-                            {
-                                fr.WriteText(item.Name, 0, index);
-                            }
-                        }
-                        break;
+        //            case ConsoleKey.PageUp:
+        //                if (Page > 0)
+        //                {
+        //                    Page--;
+        //                    index = 0;
+        //                    fr.Clear();
+        //                    lineCount = 0;
+        //                    foreach (var item in Pages[Page])
+        //                    {
+        //                        fr.WriteText(item.Name, 0, lineCount++);
+        //                    }
+        //                }
+        //                break;
+        //            case ConsoleKey.PageDown:
+        //                if (Page < LastPage)
+        //                {
+        //                    Page++;
+        //                    index = 0;
+        //                    fr.Clear();
+        //                    lineCount = 0;
+        //                    foreach (var item in Pages[Page])
+        //                    {
+        //                        fr.WriteText(item.Name, 0, lineCount++);
+        //                    }
+        //                }
+        //                break;
+        //            case ConsoleKey.Home:
+        //                if (Page > 0)
+        //                {
+        //                    Page = 0;
+        //                    index = 0;
+        //                    lineCount = 0;
+        //                    foreach (var item in Pages[Page])
+        //                    {
+        //                        fr.WriteText(item.Name, 0, lineCount++);
+        //                    }
+        //                }
+        //                break;
+        //            case ConsoleKey.End:
+        //                if (Page < LastPage)
+        //                {
+        //                    Page = LastPage;
+        //                    index = 0;
+        //                    foreach (var item in Pages[Page])
+        //                    {
+        //                        fr.WriteText(item.Name, 0, index);
+        //                    }
+        //                }
+        //                break;
 
 
-                    case ConsoleKey.UpArrow:
-                        fr.WriteText(Pages[Page][index].Name, 0, index);
-                        if (index > fr.StartRow)
-                        {
-                            index--;
-                        }
-                        break;
-                    case ConsoleKey.DownArrow:
-                        fr.WriteText(Pages[Page][index].Name, 0, index);
-                        if (index < Pages[Page].Count - 1)
-                        {
-                            index++;
-                        }
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        break;
-                    case ConsoleKey.RightArrow:
-                        break;
+        //            case ConsoleKey.UpArrow:
+        //                fr.WriteText(Pages[Page][index].Name, 0, index);
+        //                if (index > fr.StartRow)
+        //                {
+        //                    index--;
+        //                }
+        //                break;
+        //            case ConsoleKey.DownArrow:
+        //                fr.WriteText(Pages[Page][index].Name, 0, index);
+        //                if (index < Pages[Page].Count - 1)
+        //                {
+        //                    index++;
+        //                }
+        //                break;
+        //            case ConsoleKey.LeftArrow:
+        //                break;
+        //            case ConsoleKey.RightArrow:
+        //                break;
 
-                    case ConsoleKey.Applications:
-                        //SelectorContext(CursorTop, CursorLeft, CurrentCatalog);                        
-                        break;
+        //            case ConsoleKey.Applications:
+        //                //SelectorContext(CursorTop, CursorLeft, CurrentCatalog);                        
+        //                break;
 
-                    case ConsoleKey.F1:
-                        break;
-                    case ConsoleKey.F2:
-                        break;
-                    case ConsoleKey.F3:
-                        break;
-                    case ConsoleKey.F4:
-                        break;
+        //            case ConsoleKey.F1:
+        //                break;
+        //            case ConsoleKey.F2:
+        //                break;
+        //            case ConsoleKey.F3:
+        //                break;
+        //            case ConsoleKey.F4:
+        //                break;
 
-                    default:
-                        break;
-                }
+        //            default:
+        //                break;
+        //        }
 
-            } while (Cycle);
-        }
+        //    } while (Cycle);
+        //}
 
         //void SelectorContext(int top, int left, string path)
         //{
@@ -478,144 +478,146 @@ namespace FileManager
         //    } while (cycle);
         //    FW.SetColor(FrontView.ColorsPreset.Normal);
         //}
-        public void ShowContext(Dictionary<string, Comands.Comand> Cmds, FrontView FW, int top, int left)
-        {
-
-            int currentLeft = left;
-            int currentTop; // = top + 2;
-            string[] keys = new string[Cmds.Count];
-            Cmds.Keys.CopyTo(keys, 0);
-            if (top > 40 - Cmds.Count)
-            {
-                currentTop = top - Cmds.Count;
-            }
-            else
-            {
-                currentTop = top;
-            }
-            for (int i = 0; i < Cmds.Count; i++)
-            {
-                FW.SetColor(FrontView.ColorsPreset.ContextNormal);
-                Console.SetCursorPosition(currentLeft, currentTop + i);
-                Console.Write(keys[i].PadRight(17, ' '));
-            }
-            FW.SetColor(FrontView.ColorsPreset.Normal);
-            Console.SetCursorPosition(currentLeft, currentTop);
-        }
 
 
+        //public void ShowContext(Dictionary<string, Comands.Comand> Cmds, FrontView FW, int top, int left)
+        //{
 
-        void RootSelector()
-        {
-            bool Cycle = true;
-            int rootIndex = 0;
-            do
-            {
-                fr.SetColor(Frame.ColorsPreset.Selected);
-                fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
-                switch (Console.ReadKey().Key)
-                {
-                    case ConsoleKey.Enter:
-                        List<Entry> InEntry = new List<Entry>();
-                        List<List<Entry>> InPages = new List<List<Entry>>();
-                        InEntry = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
-                        InPages = MyTree.ToPages(InEntry);
-                        OneTab(InPages,out _);
-                        int count = 0;
-                        fr.Clear();
-                        foreach (var item in MyTree.Roots)
-                        {
-                            fr.SetColor(Frame.ColorsPreset.Normal);
-                            fr.WriteText(item, 0, count++);
-                        }
-                        break;
-                    case ConsoleKey.UpArrow:
-                        fr.SetColor(Frame.ColorsPreset.Normal);
-                        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
-                        if (rootIndex > 0)
-                        {
-                            rootIndex--;
-                        }
-                        break;
-                    case ConsoleKey.DownArrow:
-                        fr.SetColor(Frame.ColorsPreset.Normal);
-                        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
-                        if (rootIndex < MyTree.Roots.Count - 1)
-                        {
-                            rootIndex++;
-                        }
-                        break;
-                    case ConsoleKey.Escape:
-                        Cycle = false;
-                        break;
-                    case ConsoleKey.Applications:
-                        break;
-                    default:
-                        break;
-                }
-            } while (Cycle);
-        }
-        void ConsoleReader(int top, int left, string path)
-        {
-            StringBuilder sb = new StringBuilder();
-            bool cycle = true;
-            int index = 0;
-            string temp;
+        //    int currentLeft = left;
+        //    int currentTop; // = top + 2;
+        //    string[] keys = new string[Cmds.Count];
+        //    Cmds.Keys.CopyTo(keys, 0);
+        //    if (top > 40 - Cmds.Count)
+        //    {
+        //        currentTop = top - Cmds.Count;
+        //    }
+        //    else
+        //    {
+        //        currentTop = top;
+        //    }
+        //    for (int i = 0; i < Cmds.Count; i++)
+        //    {
+        //        FW.SetColor(FrontView.ColorsPreset.ContextNormal);
+        //        Console.SetCursorPosition(currentLeft, currentTop + i);
+        //        Console.Write(keys[i].PadRight(17, ' '));
+        //    }
+        //    FW.SetColor(FrontView.ColorsPreset.Normal);
+        //    Console.SetCursorPosition(currentLeft, currentTop);
+        //}
 
-            int cursorTop = top;
-            int cursorLeft = left;
-            Console.SetCursorPosition(0, cursorTop);
-            Console.Write(path + ">");
-            do
-            {
-                Console.SetCursorPosition(cursorLeft, cursorTop);
-                var key = Console.ReadKey();
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        if (Memory.Count > 0 & index > 0)
-                        {
-                            index--;
-                            sb.Clear();
-                            sb.Append(Memory[index]);
-                            cursorLeft = 0;
-                            Console.Write(sb.ToString());
-                            cursorLeft = sb.ToString().Length;
-                        }
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (Memory.Count > 0 & index < Memory.Count)
-                        {
-                            index++;
-                            sb.Clear();
-                            sb.Append(Memory[index]);
-                            cursorLeft = 0;
-                            Console.Write(sb.ToString());
-                            cursorLeft = sb.ToString().Length;
-                        }
-                        break;
-                    case ConsoleKey.Backspace:
-                        sb.Remove(sb.Length - 1, 1);
-                        cursorLeft = 0;
-                        Console.Write(sb.ToString().PadRight(sb.Length + 1, ' '));
-                        cursorLeft = sb.Length;
-                        break;
-                    case ConsoleKey.Enter:
-                        //ReadCommand(sb.ToString());
-                        break;
-                    case ConsoleKey.Escape:
-                    case ConsoleKey.Tab:
-                        cycle = false;
-                        break;
-                    default:
-                        sb.Append(key);
-                        cursorLeft = 0;
-                        Console.Write(sb.ToString());
-                        cursorLeft = sb.Length;
-                        break;
-                }
-            } while (cycle);
-        }
+
+
+        //void RootSelector()
+        //{
+        //    bool Cycle = true;
+        //    int rootIndex = 0;
+        //    do
+        //    {
+        //        fr.SetColor(Frame.ColorsPreset.Selected);
+        //        fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+        //        switch (Console.ReadKey().Key)
+        //        {
+        //            case ConsoleKey.Enter:
+        //                List<Entry> InEntry = new List<Entry>();
+        //                List<List<Entry>> InPages = new List<List<Entry>>();
+        //                InEntry = MyTree.GetEntryList(MyTree.Roots[rootIndex]);
+        //                InPages = MyTree.ToPages(InEntry);
+        //                OneTab(InPages,out _);
+        //                int count = 0;
+        //                fr.Clear();
+        //                foreach (var item in MyTree.Roots)
+        //                {
+        //                    fr.SetColor(Frame.ColorsPreset.Normal);
+        //                    fr.WriteText(item, 0, count++);
+        //                }
+        //                break;
+        //            case ConsoleKey.UpArrow:
+        //                fr.SetColor(Frame.ColorsPreset.Normal);
+        //                fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+        //                if (rootIndex > 0)
+        //                {
+        //                    rootIndex--;
+        //                }
+        //                break;
+        //            case ConsoleKey.DownArrow:
+        //                fr.SetColor(Frame.ColorsPreset.Normal);
+        //                fr.WriteText(MyTree.Roots[rootIndex], 0, rootIndex);
+        //                if (rootIndex < MyTree.Roots.Count - 1)
+        //                {
+        //                    rootIndex++;
+        //                }
+        //                break;
+        //            case ConsoleKey.Escape:
+        //                Cycle = false;
+        //                break;
+        //            case ConsoleKey.Applications:
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    } while (Cycle);
+        //}
+        //void ConsoleReader(int top, int left, string path)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    bool cycle = true;
+        //    int index = 0;
+        //    string temp;
+
+        //    int cursorTop = top;
+        //    int cursorLeft = left;
+        //    Console.SetCursorPosition(0, cursorTop);
+        //    Console.Write(path + ">");
+        //    do
+        //    {
+        //        Console.SetCursorPosition(cursorLeft, cursorTop);
+        //        var key = Console.ReadKey();
+        //        switch (key.Key)
+        //        {
+        //            case ConsoleKey.UpArrow:
+        //                if (Memory.Count > 0 & index > 0)
+        //                {
+        //                    index--;
+        //                    sb.Clear();
+        //                    sb.Append(Memory[index]);
+        //                    cursorLeft = 0;
+        //                    Console.Write(sb.ToString());
+        //                    cursorLeft = sb.ToString().Length;
+        //                }
+        //                break;
+        //            case ConsoleKey.DownArrow:
+        //                if (Memory.Count > 0 & index < Memory.Count)
+        //                {
+        //                    index++;
+        //                    sb.Clear();
+        //                    sb.Append(Memory[index]);
+        //                    cursorLeft = 0;
+        //                    Console.Write(sb.ToString());
+        //                    cursorLeft = sb.ToString().Length;
+        //                }
+        //                break;
+        //            case ConsoleKey.Backspace:
+        //                sb.Remove(sb.Length - 1, 1);
+        //                cursorLeft = 0;
+        //                Console.Write(sb.ToString().PadRight(sb.Length + 1, ' '));
+        //                cursorLeft = sb.Length;
+        //                break;
+        //            case ConsoleKey.Enter:
+        //                //ReadCommand(sb.ToString());
+        //                break;
+        //            case ConsoleKey.Escape:
+        //            case ConsoleKey.Tab:
+        //                cycle = false;
+        //                break;
+        //            default:
+        //                sb.Append(key);
+        //                cursorLeft = 0;
+        //                Console.Write(sb.ToString());
+        //                cursorLeft = sb.Length;
+        //                break;
+        //        }
+        //    } while (cycle);
+        //}
 
     }
 }
