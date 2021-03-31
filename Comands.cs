@@ -431,6 +431,7 @@ namespace FileManager
                     try
                     {
                         fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+
                     }
                     catch (Exception e)
                     {
