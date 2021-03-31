@@ -62,6 +62,7 @@ namespace FileManager
         Comands comand;
         public Entry entry;
         public delegate void Controller();
+        string[] Content;
 
         public Frame(int startCol, int startRow, int rws, int cls)
         {
@@ -93,6 +94,7 @@ namespace FileManager
             {
                 Console.WindowHeight = startRow + rws + 8;
             }
+
         }
         public void Show()
         {
@@ -243,8 +245,8 @@ namespace FileManager
         }
         public void WriteName()
         {
-            Console.SetCursorPosition(StartCol + 2, StartRow);
-            Console.Write(FrameName.PadRight(cols - 3, Liner));
+            Console.SetCursorPosition(StartCol + 1, StartRow);
+            Console.Write(FrameName.PadRight(cols - 2, Liner));
         }
 
         void ConsoleReader()

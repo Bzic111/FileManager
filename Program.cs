@@ -19,6 +19,8 @@ namespace FileManager
             int index = 0;
             int page = 0;
             int liner = 0;
+            int framesIndex = 0;
+            
             List<string> memory = new List<string>();
             StringBuilder consoleReader = new StringBuilder();
 
@@ -28,6 +30,8 @@ namespace FileManager
             Frame question = new Frame(30, 30, 5, 60);
             Frame readConsole = new Frame(30, 30, 5, 60);
             Frame info = new Frame(30, 10, 20, 40);
+            Frame tabs = new Frame(0, 0, 2, 150);
+            List<Frame> frames = new List<Frame>();
 
             Comands comand = new Comands();
 
@@ -38,6 +42,7 @@ namespace FileManager
             readConsole.Coloring(Frame.Colorscheme.BIOS);
             info.Coloring(Frame.Colorscheme.BIOS);
             warn.Coloring(Frame.Colorscheme.Warning);
+            
             info.SetName("Information");
 
             tree.ChangeDirectory(tree.Roots[0]);
@@ -294,8 +299,11 @@ namespace FileManager
                         info.Clear();
                         break;
                     case ConsoleKey.F2:
+                        tabs.Show();
+                        //
                         break;
                     case ConsoleKey.F3:
+                        frames.Add(new Frame(0, 0, 41, 150));
                         break;
                     case ConsoleKey.F4:
                         break;
