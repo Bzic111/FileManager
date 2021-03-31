@@ -28,6 +28,17 @@ namespace FileManager
             Frame question = new Frame(30, 30, 5, 60);
             Frame readConsole = new Frame(30, 30, 5, 60);
             Frame info = new Frame(30, 10, 20, 40);
+            Frame tabs = new Frame(0, 0, 3, 150);
+
+            Dictionary<string, Frame> FrameCollection = new Dictionary<string, Frame>();
+            FrameCollection.Add("warning", new Frame(30, 30, 5, 60));
+            FrameCollection.Add("question", new Frame(30, 30, 5, 60));
+            FrameCollection.Add("info", new Frame(30, 10, 20, 40));
+            FrameCollection.Add("tabs", new Frame(0, 0, 3, 150));
+            FrameCollection.Add("read", new Frame(30, 30, 5, 60));
+            FrameCollection.Add("FrameA", new Frame(0, 0, 41, 74));
+
+
 
             Comands comand = new Comands();
 

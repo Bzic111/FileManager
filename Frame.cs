@@ -48,6 +48,8 @@ namespace FileManager
         public int rows;
         public int cols;
         public string FrameName = "No Name";
+        public string[] Content;
+
         char LeftUpCorner = '╔';
         char LeftDownCorner = '╚';
         char RightUpCorner = '╗';
