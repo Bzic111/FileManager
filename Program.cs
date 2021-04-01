@@ -16,9 +16,12 @@ namespace FileManager
             Console.ResetColor();
             Console.Clear();
             bool Cycle = true;
+
             int index = 0;
             int page = 0;
             int liner = 0;
+            int tabIndexer = 0;
+
             List<string> memory = new List<string>();
             StringBuilder consoleReader = new StringBuilder();
 
@@ -28,8 +31,10 @@ namespace FileManager
             Frame question = new Frame(30, 30, 5, 60);
             Frame readConsole = new Frame(30, 30, 5, 60);
             Frame info = new Frame(30, 10, 20, 40);
-            Frame tabs = new Frame(0, 0, 3, 150);
-                        
+            Frame tabsFrame = new Frame(0, 0, 3, 150);
+
+            List<Tab> tabs = new List<Tab>();
+
             List<(string Name, int Page, int index, Frame frame)> Pager = new List<(string Name, int Page, int index, Frame frame)>();
             Pager.Add(("first", 0, 0, new Frame(0, 0, 41, 74)));
 
@@ -415,6 +420,10 @@ namespace FileManager
         static void AddTabToList(Dictionary<string, Frame> dict)
         {
             dict.Add($"Frame{dict.Count}", new Frame(0, 0, 41, 74));
+        }
+        static void AddTabToList(List<Tab> list)
+        {
+            list.Add(new Tab());
         }
         static void TabSelector(List<(string Name, int Page, int index, Frame frame)> Pager, ref int counter,Frame frame)
         {
