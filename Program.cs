@@ -21,7 +21,7 @@ namespace FileManager
             int page = 0;
             int liner = 0;
             int tabIndexer = 0;
-
+            int counter = 0;
             List<string> memory = new List<string>();
             StringBuilder consoleReader = new StringBuilder();
 
@@ -32,6 +32,7 @@ namespace FileManager
             Frame readConsole = new Frame(30, 30, 5, 60);
             Frame info = new Frame(30, 10, 20, 40);
             Frame tabsFrame = new Frame(0, 0, 3, 150);
+            Frame rootSelector = new Frame(30, 10, 20, 40);
 
             List<Tab> tabs = new List<Tab>();
 
@@ -43,6 +44,12 @@ namespace FileManager
 
             FileInfo fi;
             DirectoryInfo di;
+
+            rootSelector.Coloring(Frame.Colorscheme.BIOS);
+            rootSelector.SetName("Drives");
+
+            
+
 
             question.Coloring(Frame.Colorscheme.BIOS);
             readConsole.Coloring(Frame.Colorscheme.BIOS);
@@ -304,10 +311,13 @@ namespace FileManager
                         info.Clear();
                         break;
                     case ConsoleKey.F2:
+                        TabSelector(tabs, ref counter, tabsFrame);
+
                         break;
                     case ConsoleKey.F3:
                         break;
                     case ConsoleKey.F4:
+
                         break;
                     case ConsoleKey.Tab:
                         bool reader = true;
@@ -425,7 +435,7 @@ namespace FileManager
         {
             list.Add(new Tab());
         }
-        static void TabSelector(List<(string Name, int Page, int index, Frame frame)> Pager, ref int counter,Frame frame)
+        static void TabSelector(List<Tab> Pager, ref int counter, Frame frame)
         {
             int count = counter;
             var key = Console.ReadKey(true);
@@ -475,6 +485,67 @@ namespace FileManager
                         break;
                 }
             } while (cycle);
+        }
+
+        static void EasySelect((int minUD,int maxUD,int minLR,int maxLR) vars, ref int selectedUD,ref int selectedLR)
+        {
+            bool Cycle = true;
+            do
+            {
+
+            } while (Cycle);
+        }
+        static string RootSelect(string[] str, Frame fr)
+        {
+            var K = Console.ReadKey(true);
+            bool rootSelectorCycle = true;
+            int index = 0;
+            fr.Show();
+            int liner = 0;
+            fr.SetColor(Frame.ColorsPreset.Normal);
+            foreach (var item in str)
+            {
+                fr.WriteText(item.PadRight(fr.cols-2,' ').Remove(fr.cols-3),0,liner++);
+            }
+            do
+            {
+                fr.SetColor(Frame.ColorsPreset.Selected);
+                fr.WriteText(str[index], 0, index);
+                fr.SetColor(Frame.ColorsPreset.Normal);
+                switch (K.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        fr.WriteText(str[index], 0, index);
+                        if (index>0)
+                        {
+                            index--;
+                        }
+                        else
+                        {
+                            index = str.Length - 1;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        fr.WriteText(str[index], 0, index);
+                        if (index< str.Length - 1)
+                        {
+                            index++;
+                        }
+                        else
+                        {
+                            index = 0;
+                        }
+                        break;
+                    case ConsoleKey.Escape:
+                        rootSelectorCycle = false;
+                        break;
+                    case ConsoleKey.Enter:
+                        rootSelectorCycle = false;
+                        return str[index];
+                    default: break;
+                }
+            } while (rootSelectorCycle);
+            return null;
         }
     }
 }

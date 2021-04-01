@@ -87,12 +87,7 @@ namespace FileManager
         }
         public void ChangeDirectory(string path)
         {
-            try
-            {
-                GetEntryList(path);
-                GetPages(Entryes);
-            }
-            catch (Exception e)
+            if (string.IsNullOrEmpty(path))
             {
                 Frame Error = new Frame(25, 25, 3, e.Message.Length + 2);
                 Error.SetName("Error");
@@ -101,9 +96,30 @@ namespace FileManager
                 Error.Show();
                 Error.Clear();
                 Error.WriteName();
-                Error.WriteText(e.Message);
+                Error.WriteText("Path is not exist");
                 Console.ReadKey(true);
                 Console.ResetColor();
+            }
+            else
+            {
+                try
+                {
+                    GetEntryList(path);
+                    GetPages(Entryes);
+                }
+                catch (Exception e)
+                {
+                    Frame Error = new Frame(25, 25, 3, e.Message.Length + 2);
+                    Error.SetName("Error");
+                    Error.Coloring(Frame.Colorscheme.Warning);
+                    Error.SetColor(Frame.ColorsPreset.Selected);
+                    Error.Show();
+                    Error.Clear();
+                    Error.WriteName();
+                    Error.WriteText(e.Message);
+                    Console.ReadKey(true);
+                    Console.ResetColor();
+                }
             }
         }
 

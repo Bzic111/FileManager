@@ -96,9 +96,9 @@ namespace FileManager
                 Console.WindowHeight = startRow + rws + 8;
             }
         }
-        public void Show()
+        public void Show(bool clear = false, bool content = false, ColorsPreset preset = ColorsPreset.Normal)
         {
-            SetColor(ColorsPreset.Normal);
+            SetColor(preset);
             this.WriteName();
             Console.SetCursorPosition(StartCol, StartRow);
             Console.Write($"{LeftUpCorner}".PadRight(cols - 1, Liner) + RightUpCorner);
@@ -115,7 +115,19 @@ namespace FileManager
             }
             Console.SetCursorPosition(StartCol, StartRow + rows);
             Console.Write($"{LeftDownCorner}".PadRight(cols - 1, Liner) + RightDownCorner);
-            Clear();
+            if (clear)
+            {
+                Clear();
+            }
+            if (content)
+            {
+                int col = 0;
+                int row = 0;
+                foreach (var item in Content)
+                {
+                    WriteText(item,col,row++);
+                }
+            }
         }
         public void Clear()
         {
@@ -247,6 +259,14 @@ namespace FileManager
         {
             Console.SetCursorPosition(StartCol + 2, StartRow);
             Console.Write(FrameName.PadRight(cols - 3, Liner));
+        }
+        public void SetContent(int liner, string str)
+        {
+            Content = new string[rows];
+            if (liner >= 0 & liner < Content.Length)
+            {
+                Content[liner] = str.PadRight(cols - 2, ' ').Remove(cols - 3);
+            }
         }
 
         void ConsoleReader()
