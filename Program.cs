@@ -435,6 +435,8 @@ namespace FileManager
         {
             list.Add(new Tab());
         }
+
+
         static void TabSelector(List<Tab> Pager, ref int counter, Frame frame)
         {
             int count = counter;
@@ -486,7 +488,6 @@ namespace FileManager
                 }
             } while (cycle);
         }
-
         static void EasySelect((int minUD,int maxUD,int minLR,int maxLR) vars, ref int selectedUD,ref int selectedLR)
         {
             bool Cycle = true;

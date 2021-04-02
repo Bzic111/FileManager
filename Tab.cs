@@ -47,9 +47,9 @@ namespace FileManager
             else
             {
                 tree.ChangeDirectory(path);
-                for (int i = 0; i < length; i++)
+                for (int i = 0; i < tree.Pages[0].Count; i++)
                 {
-
+                    fr.SetContent(i, tree.Pages[0][i].Name);
                 }
             }
         }
