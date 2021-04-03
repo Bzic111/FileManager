@@ -7,27 +7,53 @@ using System.Collections;
 using System.Collections.Generic;
 namespace FileManager
 {
+    /// <summary>
+    /// Класс для хранения информации о файлах и каталогах в списках.
+    /// </summary>
     class Tree
     {
+        /// <summary>
+        /// Отсортированный список файлов и каталогов
+        /// </summary>
         public List<Entry> Entryes;
+
+        /// <summary>
+        /// Список файлов и каталогов по страницам
+        /// </summary>
         public List<List<Entry>> Pages;
+
+        /// <summary>
+        /// Текущая директория
+        /// </summary>
         public string CurrentPath;
-        string CurrentDrive;
+
+        /// <summary>
+        /// Список дисков
+        /// </summary>
         public List<string> Roots { get; private set; }
-        List<string> Drives;
+
         public Tree() => SetRoots();
+
+        /// <summary>
+        /// Сбор информации о текущих подключенный дисках
+        /// </summary>
         public void SetRoots()
         {
-            List<string> Drives = new List<string>();
+            List<string> drives = new List<string>();
             for (char c = 'A'; c < 'Z'; c++)
             {
                 if (Directory.Exists(c.ToString() + ":\\"))
                 {
-                    Drives.Add(c.ToString() + ":\\");
+                    drives.Add(c.ToString() + ":\\");
                 }
             }
-            Roots = Drives;
+            Roots = drives;
         }
+
+        /// <summary>
+        /// Сбор списка файлов и каталогов в директории <paramref name="path"/>
+        /// </summary>
+        /// <param name="path"></param>
         void GetEntryList(string path)
         {
             List<Entry> entryes = new List<Entry>();
@@ -57,7 +83,7 @@ namespace FileManager
             {
                 Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                 Error.SetName("Acces Denied");
-                Error.Coloring(Frame.Colorscheme.Warning);
+                Error.Coloring(Frame.ColorScheme.Warning);
                 Error.SetColor(Frame.ColorsPreset.Normal);
                 Error.Show();
                 Error.Clear();
@@ -67,6 +93,11 @@ namespace FileManager
                 Console.ReadKey(true);
             }
         }
+
+        /// <summary>
+        /// Разбиение списка файлов и каталогов на страницы по 40 элементов. 1й всегда родительский каталог или диск.
+        /// </summary>
+        /// <param name="Entryes">Список файлов и каталогов</param>
         void GetPages(List<Entry> Entryes)
         {
             List<List<Entry>> pages = new List<List<Entry>>();
@@ -80,18 +111,27 @@ namespace FileManager
             }
             Pages = pages;
         }
+
+        /// <summary>
+        /// Обновление данных директории
+        /// </summary>
         public void ReFresh()
         {
             GetEntryList(CurrentPath);
             GetPages(Entryes);
         }
+
+        /// <summary>
+        /// Смена директории с текущей на <paramref name="path"/>
+        /// </summary>
+        /// <param name="path">путь</param>
         public void ChangeDirectory(string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                Frame Error = new Frame(25, 25, 3, e.Message.Length + 2);
+                Frame Error = new Frame(25, 25, 3, 18 + 2);
                 Error.SetName("Error");
-                Error.Coloring(Frame.Colorscheme.Warning);
+                Error.Coloring(Frame.ColorScheme.Warning);
                 Error.SetColor(Frame.ColorsPreset.Selected);
                 Error.Show();
                 Error.Clear();
@@ -111,7 +151,7 @@ namespace FileManager
                 {
                     Frame Error = new Frame(25, 25, 3, e.Message.Length + 2);
                     Error.SetName("Error");
-                    Error.Coloring(Frame.Colorscheme.Warning);
+                    Error.Coloring(Frame.ColorScheme.Warning);
                     Error.SetColor(Frame.ColorsPreset.Selected);
                     Error.Show();
                     Error.Clear();
@@ -122,6 +162,5 @@ namespace FileManager
                 }
             }
         }
-
     }
 }

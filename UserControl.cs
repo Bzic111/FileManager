@@ -303,7 +303,7 @@ namespace FileManager
         //                break;
         //            case ConsoleKey.Tab:
         //                entr = Pages[Page][index];
-                        
+
         //                break;
 
         //            case ConsoleKey.Enter:

@@ -98,7 +98,7 @@ namespace FileManager
                         {
                             Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                             Error.SetName("Error");
-                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.Coloring(Frame.ColorScheme.Warning);
                             Error.SetColor(Frame.ColorsPreset.Normal);
                             Error.Show();
                             Error.Clear();
@@ -119,7 +119,7 @@ namespace FileManager
                         {
                             Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                             Error.SetName("Error");
-                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.Coloring(Frame.ColorScheme.Warning);
                             Error.SetColor(Frame.ColorsPreset.Normal);
                             Error.Show();
                             Error.Clear();
@@ -146,7 +146,7 @@ namespace FileManager
                         {
                             Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                             Error.SetName("Acces Denied");
-                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.Coloring(Frame.ColorScheme.Warning);
                             Error.SetColor(Frame.ColorsPreset.Normal);
                             Error.Show();
                             Error.Clear();
@@ -168,7 +168,7 @@ namespace FileManager
                         {
                             Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                             Error.SetName("Error");
-                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.Coloring(Frame.ColorScheme.Warning);
                             Error.SetColor(Frame.ColorsPreset.Normal);
                             Error.Show();
                             Error.Clear();
@@ -192,7 +192,7 @@ namespace FileManager
                         {
                             Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                             Error.SetName("Acces Denied");
-                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.Coloring(Frame.ColorScheme.Warning);
                             Error.SetColor(Frame.ColorsPreset.Normal);
                             Error.Show();
                             Error.Clear();
@@ -216,7 +216,7 @@ namespace FileManager
                         {
                             Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
                             Error.SetName("Acces Denied");
-                            Error.Coloring(Frame.Colorscheme.Warning);
+                            Error.Coloring(Frame.ColorScheme.Warning);
                             Error.SetColor(Frame.ColorsPreset.Normal);
                             Error.Show();
                             Error.Clear();
@@ -231,7 +231,7 @@ namespace FileManager
                         string errorStr = $"File {attr} already exist";
                         Frame Error = new Frame(30, 30, 5, errorStr.Length + 2);
                         Error.SetName("File exist");
-                        Error.Coloring(Frame.Colorscheme.Warning);
+                        Error.Coloring(Frame.ColorScheme.Warning);
                         Error.SetColor(Frame.ColorsPreset.Normal);
                         Error.Show();
                         Error.Clear();
@@ -245,7 +245,7 @@ namespace FileManager
                         string errorStr = $"File {path} not exist";
                         Frame Error = new Frame(30, 30, 5, errorStr.Length + 2);
                         Error.SetName("File not exist");
-                        Error.Coloring(Frame.Colorscheme.Warning);
+                        Error.Coloring(Frame.ColorScheme.Warning);
                         Error.SetColor(Frame.ColorsPreset.Normal);
                         Error.Show();
                         Error.Clear();
@@ -264,7 +264,7 @@ namespace FileManager
         public void Delete(Entry entry)
         {
             Frame warn = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.Colorscheme.Warning);
+            warn.Coloring(Frame.ColorScheme.Warning);
 
             if (entry.type == Entry.Type.Directory)
             {
@@ -301,8 +301,8 @@ namespace FileManager
         {
             Frame warn = new Frame(30, 30, 5, 60);
             Frame readConsole = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.Colorscheme.Warning);
-            readConsole.Coloring(Frame.Colorscheme.BIOS);
+            warn.Coloring(Frame.ColorScheme.Warning);
+            readConsole.Coloring(Frame.ColorScheme.BIOS);
             string name;
             switch (type)
             {
@@ -377,7 +377,7 @@ namespace FileManager
         public void Move(Entry entry, string destinationPath)
         {
             Frame warn = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.Colorscheme.Warning);
+            warn.Coloring(Frame.ColorScheme.Warning);
             if (entry.type == Entry.Type.Directory)
             {
                 try
@@ -411,7 +411,7 @@ namespace FileManager
         public void CopyDir(DirectoryInfo source, DirectoryInfo target)
         {
             Frame warn = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.Colorscheme.Warning);
+            warn.Coloring(Frame.ColorScheme.Warning);
 
             if (source.FullName == target.FullName)
             {
@@ -448,5 +448,7 @@ namespace FileManager
                 }
             }
         }
+
+
     }
 }
