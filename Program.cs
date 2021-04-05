@@ -17,7 +17,7 @@ namespace FileManager
             Console.Clear();
 
             bool Cycle = true;
-
+            bool refresher = false;
             int index = 0;
             int page = 0;
             int tabIndexer = 0;
@@ -45,6 +45,7 @@ namespace FileManager
                 tabs[tabIndexer].WorkFrame.WriteText(tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Name, 0, index);
                 var key = Console.ReadKey();
                 tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
+                refresher = false;
                 switch (key.Key)
                 {
                     case ConsoleKey.Escape:     Cycle = false;                                                              break;
@@ -59,16 +60,13 @@ namespace FileManager
 
                     case ConsoleKey.Insert:     tabs[tabIndexer].WorkFrame.Create(ref page, ref index);                     break;
                     case ConsoleKey.Delete:     tabs[tabIndexer].WorkFrame.Delete(ref page, ref index);                     break;
-                    case ConsoleKey.Tab:        tabs[tabIndexer].WorkFrame.ConsoleReader(memory, out bool refresher);       break;
+                    case ConsoleKey.Tab:        tabs[tabIndexer].WorkFrame.ConsoleReader(memory, out refresher);            break;
 
-                    case ConsoleKey.F1:         info.Show(); info.Clear(); break;
+                    case ConsoleKey.F1:         info.Show(true); break;
                     case ConsoleKey.F2:         TabSelector(tabs, ref tabIndexer, ref page, ref index);                     break;
                     case ConsoleKey.F3:         AddTabToList(tabs, ref tabIndexer, ref page, ref index);                    break;
                     case ConsoleKey.F4:         DeleteTabFromList(tabs, ref tabIndexer, ref page, ref index);               break;
-                    
-
-
-
+                                        
                     case ConsoleKey.LeftArrow: break;
                     case ConsoleKey.RightArrow: break;
                     case ConsoleKey.Applications: break;
@@ -79,9 +77,7 @@ namespace FileManager
                 if (refresher)
                 {
                     tabs[tabIndexer].WorkFrame.tree.ReFresh();
-                    tabs[tabIndexer].WorkFrame.Refresh();
-                    tabs[tabIndexer].WorkFrame.GetContentFromTree(tabs[tabIndexer].WorkFrame.tree);
-                    tabs[tabIndexer].WorkFrame.ShowContentFromTree(page);
+                    tabs[tabIndexer].WorkFrame.Refresh(true, page);
                 }
                 tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
             } while (Cycle);
@@ -186,8 +182,15 @@ namespace FileManager
             }
         }
 
+        static void Start()
+        {
+            Console.ResetColor();
+            // find file json\xml if(true) load file json\xml else init new List<Tab> show root selector frame
+            // if(true) create List<Tab> else init new List<Tab>
+        }
         static void Exit()
         {
+            // save List<tab> to file json\xml
             Console.ResetColor();
         }
     }

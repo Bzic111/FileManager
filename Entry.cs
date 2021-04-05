@@ -21,19 +21,18 @@ namespace FileManager
         private double Gbyte = Math.Pow(1024, 3);
 
         public string Parent;
-
         public string Name;
         public string Path;
-        public Type type;
-        DirectoryInfo DI;
-        FileInfo FI;
         public string Extension;
         public string Size;
         public string ShortInfo;
         public string FullInfo;
         public string LastWrite;
         public bool Visible = false;
-        public List<Entry> Catalog;
+        public Type type;
+
+        DirectoryInfo DI;
+        FileInfo FI;
 
         public Entry()
         {
@@ -41,7 +40,6 @@ namespace FileManager
         }
         public Entry(string path, Type t)
         {
-
             Path = path;
             type = t;
             Name = path.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1];
@@ -83,7 +81,6 @@ namespace FileManager
             }
             ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
             string[] tempS = path.Split('\\');
-            //Parent = tempS[0] + '\\';
             for (int i = 0; i < tempS.Length - 1; i++)
             {
                 Parent += tempS[i];
@@ -105,10 +102,5 @@ namespace FileManager
             }
             return null;
         }
-        public void WriteName() => Console.Write(Name);
-        public void WritePath() => Console.Write(Path);
-        public void WriteParent() => Console.Write(Parent);
-        public string GetParent() => Parent;
-
     }
 }

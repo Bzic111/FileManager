@@ -11,17 +11,6 @@ namespace FileManager
     class Frame
     {
         /// <summary>
-        /// Тип управления
-        /// </summary>
-        public enum ControlType
-        {
-            ConsoleReader,
-            TabSelector,
-            Input,
-            OK
-        }
-
-        /// <summary>
         /// Цветовая схема
         /// </summary>
         public enum ColorScheme
@@ -43,6 +32,9 @@ namespace FileManager
             Standart
         }
 
+        /// <summary>
+        /// Ключи для переходов внутри списка дерева
+        /// </summary>
         public enum To
         {
             StepBack,
@@ -55,16 +47,21 @@ namespace FileManager
             StepDown
         }
 
-        ControlType CType;
         ColorScheme Scheme;
-        ConsoleColor NormalBackGround;              // = Black;
-        ConsoleColor SelectedBackGround;            // = White;
-        ConsoleColor NormalText;                    //  = White;
-        ConsoleColor SelectedText;                  //  = Black;
-        ConsoleColor ContexMenuNormalBackGround;    //  = Gray;
-        ConsoleColor ContexMenuSelectedBackGround;  //  = Yellow;
-        ConsoleColor SelectedContext;               //  = Red;
-        ConsoleColor NormalContext;                 //  = Black;
+        private ConsoleColor NormalBackGround;
+        private ConsoleColor SelectedBackGround;
+        private ConsoleColor NormalText;
+        private ConsoleColor SelectedText;
+        private ConsoleColor ContexMenuNormalBackGround;
+        private ConsoleColor ContexMenuSelectedBackGround;
+        private ConsoleColor SelectedContext;
+        private ConsoleColor NormalContext;
+        private char LeftUpCorner = '╔';
+        private char LeftDownCorner = '╚';
+        private char RightUpCorner = '╗';
+        private char RightDownCorner = '╝';
+        private char Liner = '═';
+        private char Border = '║';
 
         public int StartCol;
         public int StartRow;
@@ -75,19 +72,11 @@ namespace FileManager
         public int Page;
         public List<string[]> Pages;
         public Tree tree;
-
-        char LeftUpCorner = '╔';
-        char LeftDownCorner = '╚';
-        char RightUpCorner = '╗';
-        char RightDownCorner = '╝';
-        char Liner = '═';
-        char Border = '║';
+        public Entry entry;
 
         int page;
         int index;
         Comands comand;
-        public Entry entry;
-        public delegate void Controller();
 
         public Frame()
         {
@@ -180,7 +169,7 @@ namespace FileManager
         /// <summary>
         /// Обновить фрейм
         /// </summary>
-        public void Refresh(bool content = false)
+        public void Refresh(bool content = false, int pge = 0)
         {
             Show();
             Clear();
@@ -189,7 +178,7 @@ namespace FileManager
             {
                 tree.ReFresh();
                 GetContentFromTree(tree);
-                ShowContentFromTree(page);
+                ShowContentFromTree(pge);
             }
         }
 
@@ -469,7 +458,6 @@ namespace FileManager
                 WriteText(tree.Pages[page][index].Name, 0, index);
             }
         }
-               
 
         /// <summary>
         /// Создать новый элемент.
@@ -611,282 +599,5 @@ namespace FileManager
             } while (reader);
         }
 
-
-        void FrameSelector(ref Dictionary<string, Frame> frames, out int outIndex)
-        {
-            outIndex = 0;
-            DirectoryInfo di;
-            FileInfo fi;
-            bool Cycle = true;
-            int liner = 0;
-            foreach (var item in tree.Pages[page])
-            {
-                WriteText(item.Name, 0, liner++);
-            }
-            do
-            {
-                liner = 0;
-                SetName($"╣{tree.Pages[page][index].Parent} | Page {page + 1}/{tree.Pages.Count}╠");
-                WriteName();
-                Console.CursorVisible = false;
-                SetColor(Frame.ColorsPreset.Selected);
-                WriteText(tree.Pages[page][index].Name, 0, index);
-                var key = Console.ReadKey();
-                SetColor(Frame.ColorsPreset.Normal);
-                switch (key.Key)
-                {
-                    case ConsoleKey.Backspace:
-                        tree.ChangeDirectory(tree.Pages[0][0].Parent);
-                        page = 0;
-                        index = 0;
-                        Clear();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-                    case ConsoleKey.Enter:
-                        if (page == 0 & index == 0)
-                        {
-                            tree.ChangeDirectory(tree.Pages[page][index].Parent);
-                        }
-                        else
-                        {
-                            tree.ChangeDirectory(tree.Pages[page][index].Path + '\\' + tree.Pages[page][index].Name);
-                        }
-                        page = 0;
-                        index = 0;
-                        Clear();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-                    case ConsoleKey.Escape:
-                        outIndex = 1;
-                        Cycle = false;
-                        break;
-
-                    case ConsoleKey.PageUp:
-                        if (page > 0)
-                        {
-                            page--;
-                            index = 0;
-                        }
-                        Clear();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-                    case ConsoleKey.PageDown:
-                        if (page < tree.Pages.Count - 1)
-                        {
-                            page++;
-                            index = 0;
-                        }
-                        Clear();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-                    case ConsoleKey.End:
-                        page = tree.Pages.Count - 1;
-                        index = tree.Pages[page].Count - 1;
-                        Clear();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-                    case ConsoleKey.Home:
-                        page = 0;
-                        index = 0;
-                        Clear();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-
-                    case ConsoleKey.UpArrow:
-                        WriteText(tree.Pages[page][index].Name, 0, index);
-                        if (index > 0)
-                        {
-                            index--;
-                        }
-                        break;
-                    case ConsoleKey.DownArrow:
-                        WriteText(tree.Pages[page][index].Name, 0, index);
-                        if (index < tree.Pages[page].Count - 1)
-                        {
-                            index++;
-                        }
-                        break;
-
-                    case ConsoleKey.LeftArrow:
-                        break;
-                    case ConsoleKey.RightArrow:
-                        break;
-
-                    case ConsoleKey.Insert:
-                        frames.GetValueOrDefault("question").SetName("Creating");
-                        frames.GetValueOrDefault("question").Show();
-                        frames.GetValueOrDefault("question").WriteText($"Create Directory or File? [D/F] ?");
-                        var q = Console.ReadKey(true);
-                        string name;
-                        switch (q.Key)
-                        {
-                            case ConsoleKey.D:
-                                frames.GetValueOrDefault("readConsole").SetName("Input Name");
-                                frames.GetValueOrDefault("readConsole").Show();
-                                frames.GetValueOrDefault("readConsole").SetColor(Frame.ColorsPreset.ContextNormal);
-                                frames.GetValueOrDefault("readConsole").WriteText("".PadRight(frames.GetValueOrDefault("readConsole").cols - 2, ' '));
-                                frames.GetValueOrDefault("readConsole").SetCursorPosition(0, 0);
-                                name = Console.ReadLine();
-                                if (!Directory.Exists(tree.Pages[page][index].Path + '\\' + name))
-                                {
-                                    try
-                                    {
-                                        di = new DirectoryInfo(tree.Pages[page][index].Path + '\\' + name);
-                                        di.Create();
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        frames.GetValueOrDefault("warn").Show();
-                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
-                                        Console.ReadKey(true);
-                                    }
-
-                                }
-                                else
-                                {
-                                    frames.GetValueOrDefault("warn").Show();
-                                    frames.GetValueOrDefault("warn").WriteText("Directory already exist.");
-                                    Console.ReadKey(true);
-                                }
-                                break;
-                            case ConsoleKey.F:
-                                frames.GetValueOrDefault("readConsole").SetName("Input Name");
-                                frames.GetValueOrDefault("readConsole").Show();
-                                frames.GetValueOrDefault("readConsole").SetColor(Frame.ColorsPreset.ContextNormal);
-                                frames.GetValueOrDefault("readConsole").WriteText("".PadRight(frames.GetValueOrDefault("readConsole").cols - 2, ' '));
-                                frames.GetValueOrDefault("readConsole").SetCursorPosition(0, 0);
-                                name = Console.ReadLine();
-                                if (!File.Exists(tree.Pages[page][index].Path + '\\' + name))
-                                {
-                                    try
-                                    {
-                                        FileStream fs = File.Create(tree.Pages[page][index].Path + '\\' + name);
-                                        fs.Close();
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        frames.GetValueOrDefault("warn").Show();
-                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
-                                        Console.ReadKey(true);
-                                    }
-                                }
-                                else
-                                {
-                                    frames.GetValueOrDefault("warn").Show();
-                                    frames.GetValueOrDefault("warn").WriteText("File already exist.");
-                                    Console.ReadKey(true);
-                                }
-                                break;
-                            default: break;
-                        }
-                        tree.ReFresh();
-                        page = 0;
-                        index = 0;
-                        Refresh();
-                        foreach (var item in tree.Pages[page])
-                        {
-                            WriteText(item.Name, 0, liner++);
-                        }
-                        break;
-                    case ConsoleKey.Delete:
-                        frames.GetValueOrDefault("question").SetName("Deleting");
-                        frames.GetValueOrDefault("question").Show();
-                        frames.GetValueOrDefault("question").WriteText($"Delete {tree.Pages[page][index].Name} Y/N ?");
-                        q = Console.ReadKey(true);
-                        switch (q.Key)
-                        {
-                            case ConsoleKey.Y:
-                                if (tree.Pages[page][index].type == Entry.Type.Directory)
-                                {
-                                    try
-                                    {
-                                        di = (DirectoryInfo)tree.Pages[page][index].GetInfoType();
-                                        di.Delete(true);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        frames.GetValueOrDefault("warn").Show();
-                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
-                                        Console.ReadKey(true);
-                                    }
-                                }
-                                else if (tree.Pages[page][index].type == Entry.Type.File)
-                                {
-                                    try
-                                    {
-                                        fi = (FileInfo)tree.Pages[page][index].GetInfoType();
-                                        fi.Delete();
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        frames.GetValueOrDefault("warn").Show();
-                                        frames.GetValueOrDefault("warn").WriteText(e.Message);
-                                        Console.ReadKey(true);
-                                    }
-                                }
-                                tree.ReFresh();
-                                page = 0;
-                                index = 0;
-                                Refresh();
-                                foreach (var item in tree.Pages[page])
-                                {
-                                    WriteText(item.Name, 0, liner++);
-                                }
-                                break;
-                            case ConsoleKey.N:
-                            default:
-                                break;
-                        }
-                        break;
-                    case ConsoleKey.Applications:
-                        Console.SetCursorPosition(0, 43);
-                        Console.WriteLine(tree.Pages[page][index].Path);
-                        Console.WriteLine(tree.Pages[page][index].Parent);
-                        break;
-
-                    case ConsoleKey.F1:
-                        frames.GetValueOrDefault("info").Show();
-                        break;
-                    case ConsoleKey.F2:
-                        break;
-                    case ConsoleKey.F3:
-                        break;
-                    case ConsoleKey.F4:
-                        break;
-                    case ConsoleKey.Tab:
-                        outIndex = 2;
-                        Cycle = false;
-                        break;
-                    default:
-                        break;
-                }
-            } while (Cycle);
-        }
-        void Input()
-        {
-
-        }
-        void OK()
-        {
-
-        }
     }
 }

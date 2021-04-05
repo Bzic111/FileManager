@@ -68,7 +68,7 @@ namespace FileManager
             bool rootSelectorCycle = true;
             int index = 0;
             fr.Show(true, true, Frame.ColorsPreset.Normal);
-            int liner = 0;
+
             do
             {
                 fr.SetColor(Frame.ColorsPreset.Selected);
@@ -110,8 +110,5 @@ namespace FileManager
             } while (rootSelectorCycle);
             return null;
         }
-
-       
-
     }
 }
