@@ -13,16 +13,15 @@ namespace FileManager
     {
         static void Main(string[] args)
         {
-            Console.ResetColor();
-            Console.Clear();
+            Start();
 
             bool Cycle = true;
-            bool refresher = false;
             int index = 0;
             int page = 0;
             int tabIndexer = 0;
+
             List<string> memory = new List<string>();
-            StringBuilder consoleReader = new StringBuilder();
+
             Frame info = new Frame(30, 10, 20, 40);
             info.Coloring(Frame.ColorScheme.BIOS);
             info.SetName("Information");
@@ -38,14 +37,16 @@ namespace FileManager
 
             do
             {
+                bool refresher = false;
+                Console.CursorVisible = false;
+
                 tabs[tabIndexer].WorkFrame.SetName($"╣{tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Parent} | Page {page + 1}/{tabs[tabIndexer].WorkFrame.tree.Pages.Count}╠");
                 tabs[tabIndexer].WorkFrame.WriteName();
-                Console.CursorVisible = false;
                 tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Selected);
                 tabs[tabIndexer].WorkFrame.WriteText(tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Name, 0, index);
-                var key = Console.ReadKey();
                 tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
-                refresher = false;
+                
+                var key = Console.ReadKey();
                 switch (key.Key)
                 {
                     case ConsoleKey.Escape:     Cycle = false;                                                              break;
@@ -185,7 +186,8 @@ namespace FileManager
         static void Start()
         {
             Console.ResetColor();
-            // find file json\xml if(true) load file json\xml else init new List<Tab> show root selector frame
+            Console.Clear();
+            // find file json\xml if(true) load file json\xml else init new List<Tab>(new Tab) show root selector frame
             // if(true) create List<Tab> else init new List<Tab>
         }
         static void Exit()
