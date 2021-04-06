@@ -8,6 +8,10 @@ using System.Collections.Generic;
 
 namespace FileManager
 {
+    /// <summary>
+    /// Фрейм.
+    /// </summary>
+    [Serializable]
     class Frame
     {
         /// <summary>
@@ -47,7 +51,6 @@ namespace FileManager
             StepDown
         }
 
-        ColorScheme Scheme;
         private ConsoleColor NormalBackGround;
         private ConsoleColor SelectedBackGround;
         private ConsoleColor NormalText;
@@ -63,6 +66,7 @@ namespace FileManager
         private char Liner = '═';
         private char Border = '║';
 
+        public ColorScheme Scheme;
         public int StartCol;
         public int StartRow;
         public int rows;
@@ -80,7 +84,8 @@ namespace FileManager
 
         public Frame()
         {
-
+            comand = new Comands();
+            Coloring(Scheme);
         }
 
         /// <summary>
@@ -93,6 +98,7 @@ namespace FileManager
         /// <param name="scheme">Цветовая схема</param>
         public Frame(int startCol, int startRow, int rws, int cls, string frameName = "No Name", ColorScheme scheme = ColorScheme.Default)
         {
+            comand = new Comands();
             StartCol = startCol;
             StartRow = startRow;
             rows = rws;

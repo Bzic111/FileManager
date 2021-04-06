@@ -7,6 +7,7 @@ namespace FileManager
     /// <summary>
     /// Класс для формирования вкладки
     /// </summary>
+    [Serializable]
     class Tab
     {
         public string Name;

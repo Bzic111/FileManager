@@ -10,6 +10,7 @@ namespace FileManager
     /// <summary>
     /// Класс для хранения информации о файлах и каталогах в списках.
     /// </summary>
+    [Serializable]
     class Tree
     {
         /// <summary>
