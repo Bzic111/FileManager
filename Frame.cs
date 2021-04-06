@@ -12,7 +12,7 @@ namespace FileManager
     /// Фрейм.
     /// </summary>
     [Serializable]
-    class Frame
+    public class Frame
     {
         /// <summary>
         /// Цветовая схема
@@ -85,7 +85,7 @@ namespace FileManager
         public Frame()
         {
             comand = new Comands();
-            Coloring(Scheme);
+            Coloring(Scheme);            
         }
 
         /// <summary>
@@ -104,14 +104,6 @@ namespace FileManager
             rows = rws;
             cols = cls;
             FrameName = frameName;
-            if (Console.WindowWidth < startCol + cls)
-            {
-                Console.WindowWidth = startCol + cls;
-            }
-            if (Console.WindowHeight < startRow + rws + 8)
-            {
-                Console.WindowHeight = startRow + rws + 8;
-            }
             Scheme = scheme;
             Coloring(Scheme);
             Content = new string[rows - 1];
@@ -125,8 +117,15 @@ namespace FileManager
         /// <param name="preset">Сочетания цветов</param>
         public void Show(bool clear = false, bool content = false, ColorsPreset preset = ColorsPreset.Normal)
         {
+            if(Console.WindowWidth < StartCol + cols)
+            {
+                Console.WindowWidth = StartCol + cols;
+            }
+            if (Console.WindowHeight < StartRow + rows + 8)
+            {
+                Console.WindowHeight = StartRow + rows + 8;
+            }
             SetColor(preset);
-            WriteName();
             Console.SetCursorPosition(StartCol, StartRow);
             Console.Write($"{LeftUpCorner}".PadRight(cols - 1, Liner) + RightUpCorner);
             if (!string.IsNullOrEmpty(FrameName))

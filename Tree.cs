@@ -11,7 +11,7 @@ namespace FileManager
     /// Класс для хранения информации о файлах и каталогах в списках.
     /// </summary>
     [Serializable]
-    class Tree
+    public class Tree
     {
         /// <summary>
         /// Отсортированный список файлов и каталогов
@@ -33,6 +33,7 @@ namespace FileManager
         /// </summary>
         public List<string> Roots { get; private set; }
 
+        
         public Tree() => SetRoots();
 
         /// <summary>

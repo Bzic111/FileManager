@@ -8,7 +8,8 @@ using System.Collections.Generic;
 
 namespace FileManager
 {
-    class Entry
+    [Serializable]
+    public class Entry
     {
         public enum Type
         {

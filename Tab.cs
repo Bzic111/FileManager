@@ -8,12 +8,13 @@ namespace FileManager
     /// Класс для формирования вкладки
     /// </summary>
     [Serializable]
-    class Tab
+    public class Tab
     {
-        public string Name;
+        public string Name { get => WorkFrame.tree.CurrentPath.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1]; set => name = value; }
         public int Page = 0;
         public int index = 0;
         public Frame WorkFrame;
+        private string name;
 
         public Tab()
         {
