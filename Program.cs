@@ -34,6 +34,7 @@ namespace FileManager
         static void Main(string[] args)
         {
             Frame info = new Frame(30, 10, 20, 40);
+            Frame context = new Frame(0, 0, 25, 40, "Context", Frame.ColorScheme.Default);
 
             bool clear = false;
             bool Cycle = true;
@@ -86,7 +87,16 @@ namespace FileManager
                     case ConsoleKey.F3:         AddTabToList(Tabs, ref tabIndexer, ref page, ref index);                            break;
                     case ConsoleKey.F4:         DeleteTabFromList(Tabs, ref tabIndexer, ref page, ref index, ref Cycle, ref clear); break;
                                         
-                    case ConsoleKey.LeftArrow: break;
+                    case ConsoleKey.LeftArrow:
+                        context.tree.ChangeDirectory(Tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Path);
+                        context.GetContentFromTree(context.tree);
+                        context.Show(true, true, Frame.ColorsPreset.ContextNormal);
+                        bool contextCycle = true;
+                        do
+                        {
+
+                        } while (contextCycle);
+                        break;
                     case ConsoleKey.RightArrow: break;
                     case ConsoleKey.Applications: break;
 

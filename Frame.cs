@@ -148,12 +148,7 @@ namespace FileManager
             if (content)
             {
                 SetColor(ColorsPreset.Normal);
-                int col = 0;
-                int row = 0;
-                foreach (var item in Content)
-                {
-                    WriteText(item, col, row++);
-                }
+                ShowContentFromTree(0);
             }
             Console.ResetColor();
         }
@@ -331,6 +326,19 @@ namespace FileManager
         {
             Console.SetCursorPosition(StartCol + 2, StartRow);
             Console.Write(FrameName.PadRight(cols - 3, Liner));
+        }
+
+        public void SetPages(List<Entry> entr)
+        {
+            Pages = new List<string[]>();
+            for (int i = 0, counter = 0; counter < entr.Count; i++)
+            {
+                Pages.Add(new string[rows]);
+                for (int j = 0; j < rows-2 & counter < entr.Count; j++, counter++)
+                {
+                    Pages[i][j]=entr[counter].Name;
+                }
+            }
         }
 
         /// <summary>
