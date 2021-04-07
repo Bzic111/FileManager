@@ -28,78 +28,78 @@ namespace FileManager
     }
     class Program
     {
-        static public List<Tab> tabs;
+        static public List<Tab> Tabs;
+        static List<string> ComMemory = new List<string>();
+
         static void Main(string[] args)
         {
-            bool clear = false;
-            List<string> memory = new List<string>();
             Frame info = new Frame(30, 10, 20, 40);
+
+            bool clear = false;
             bool Cycle = true;
+            
             int index = 0;
             int page = 0;
             int tabIndexer = 0;
 
-            Start(ref tabs,ref index, ref page, ref tabIndexer);
+            Start(ref Tabs,ref index, ref page, ref tabIndexer);
 
-            tabs[tabIndexer].WorkFrame.Coloring(Frame.ColorScheme.Default);
-            tabs[tabIndexer].WorkFrame.SetName(tabs[tabIndexer].WorkFrame.tree.Roots[0] + $"Page {page + 1}/{tabs[tabIndexer].WorkFrame.tree.Pages.Count}");
-            tabs[tabIndexer].WorkFrame.Show();
-            tabs[tabIndexer].WorkFrame.GetContentFromTree(tabs[tabIndexer].WorkFrame.tree);
-            tabs[tabIndexer].WorkFrame.ShowContentFromTree(page);
+            Tabs[tabIndexer].WorkFrame.Coloring(Frame.ColorScheme.Default);
+            Tabs[tabIndexer].WorkFrame.SetName(Tabs[tabIndexer].WorkFrame.tree.Roots[0] + $"Page {page + 1}/{Tabs[tabIndexer].WorkFrame.tree.Pages.Count}");
+            Tabs[tabIndexer].WorkFrame.Show();
+            Tabs[tabIndexer].WorkFrame.GetContentFromTree(Tabs[tabIndexer].WorkFrame.tree);
+            Tabs[tabIndexer].WorkFrame.ShowContentFromTree(page);
 
             info.Coloring(Frame.ColorScheme.BIOS);
             info.SetName("Information");
-
-            
 
             do
             {
                 bool refresher = false;
                 Console.CursorVisible = false;
 
-                tabs[tabIndexer].WorkFrame.SetName($"╣{tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Parent} | Page {page + 1}/{tabs[tabIndexer].WorkFrame.tree.Pages.Count}╠");
-                tabs[tabIndexer].WorkFrame.WriteName();
-                tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Selected);
-                tabs[tabIndexer].WorkFrame.WriteText(tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Name, 0, index);
-                tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
+                Tabs[tabIndexer].WorkFrame.SetName($"╣{Tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Parent} | Page {page + 1}/{Tabs[tabIndexer].WorkFrame.tree.Pages.Count}╠");
+                Tabs[tabIndexer].WorkFrame.WriteName();
+                Tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Selected);
+                Tabs[tabIndexer].WorkFrame.WriteText(Tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Name, 0, index);
+                Tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
                 
                 var key = Console.ReadKey();
                 switch (key.Key)
                 {
                     case ConsoleKey.Escape:     Cycle = false; clear = false;                                                       break;
-                    case ConsoleKey.Backspace:  tabs[tabIndexer].WorkFrame.Go(Frame.To.StepBack, ref page, ref index);              break;
-                    case ConsoleKey.Enter:      tabs[tabIndexer].WorkFrame.Go(Frame.To.StepForward, ref page, ref index);           break;
-                    case ConsoleKey.PageUp:     tabs[tabIndexer].WorkFrame.Go(Frame.To.NextPage, ref page, ref index);              break;
-                    case ConsoleKey.PageDown:   tabs[tabIndexer].WorkFrame.Go(Frame.To.PreviousPage, ref page, ref index);          break;
-                    case ConsoleKey.End:        tabs[tabIndexer].WorkFrame.Go(Frame.To.LastPage, ref page, ref index);              break;
-                    case ConsoleKey.Home:       tabs[tabIndexer].WorkFrame.Go(Frame.To.FirstPage, ref page, ref index);             break;
-                    case ConsoleKey.UpArrow:    tabs[tabIndexer].WorkFrame.Go(Frame.To.StepUp, ref page, ref index);                break;
-                    case ConsoleKey.DownArrow:  tabs[tabIndexer].WorkFrame.Go(Frame.To.StepDown, ref page, ref index);              break;
+                    case ConsoleKey.Backspace:  Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepBack, ref page, ref index);              break;
+                    case ConsoleKey.Enter:      Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepForward, ref page, ref index);           break;
+                    case ConsoleKey.PageUp:     Tabs[tabIndexer].WorkFrame.Go(Frame.To.NextPage, ref page, ref index);              break;
+                    case ConsoleKey.PageDown:   Tabs[tabIndexer].WorkFrame.Go(Frame.To.PreviousPage, ref page, ref index);          break;
+                    case ConsoleKey.End:        Tabs[tabIndexer].WorkFrame.Go(Frame.To.LastPage, ref page, ref index);              break;
+                    case ConsoleKey.Home:       Tabs[tabIndexer].WorkFrame.Go(Frame.To.FirstPage, ref page, ref index);             break;
+                    case ConsoleKey.UpArrow:    Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepUp, ref page, ref index);                break;
+                    case ConsoleKey.DownArrow:  Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepDown, ref page, ref index);              break;
 
-                    case ConsoleKey.Insert:     tabs[tabIndexer].WorkFrame.Create(ref page, ref index);                             break;
-                    case ConsoleKey.Delete:     tabs[tabIndexer].WorkFrame.Delete(ref page, ref index);                             break;
-                    case ConsoleKey.Tab:        tabs[tabIndexer].WorkFrame.ConsoleReader(memory, out refresher);                    break;
+                    case ConsoleKey.Insert:     Tabs[tabIndexer].WorkFrame.Create(ref page, ref index);                             break;
+                    case ConsoleKey.Delete:     Tabs[tabIndexer].WorkFrame.Delete(ref page, ref index);                             break;
+                    case ConsoleKey.Tab:        Tabs[tabIndexer].WorkFrame.ConsoleReader(ComMemory, out refresher);                 break;
 
                     case ConsoleKey.F1:         info.Show(true); break;
-                    case ConsoleKey.F2:         TabSelector(tabs, ref tabIndexer, ref page, ref index);                             break;
-                    case ConsoleKey.F3:         AddTabToList(tabs, ref tabIndexer, ref page, ref index);                            break;
-                    case ConsoleKey.F4:         DeleteTabFromList(tabs, ref tabIndexer, ref page, ref index, ref Cycle, ref clear); break;
+                    case ConsoleKey.F2:         TabSelector(Tabs, ref tabIndexer, ref page, ref index);                             break;
+                    case ConsoleKey.F3:         AddTabToList(Tabs, ref tabIndexer, ref page, ref index);                            break;
+                    case ConsoleKey.F4:         DeleteTabFromList(Tabs, ref tabIndexer, ref page, ref index, ref Cycle, ref clear); break;
                                         
                     case ConsoleKey.LeftArrow: break;
                     case ConsoleKey.RightArrow: break;
                     case ConsoleKey.Applications: break;
 
-                    default:
-                        break;
+                    default: break;
                 }
                 if (refresher)
                 {
-                    tabs[tabIndexer].WorkFrame.tree.ReFresh();
-                    tabs[tabIndexer].WorkFrame.Refresh(true, page);
+                    Tabs[tabIndexer].WorkFrame.tree.ReFresh();
+                    Tabs[tabIndexer].WorkFrame.Refresh(true, page);
                 }
-                tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
+                Tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
             } while (Cycle);
-            Exit(tabs, ref index, ref page, ref tabIndexer,clear);
+            Exit(Tabs, ref index, ref page, ref tabIndexer,clear);
         }
         static void TabSelector(List<Tab> Pager, ref int counter, ref int page, ref int index)
         {
@@ -209,11 +209,21 @@ namespace FileManager
             if (File.Exists("test.xml"))
             {
                 XmlSerializer xmls = new XmlSerializer(typeof(List<Tab>));
-                FileStream fs = new FileStream("test.xml", FileMode.Open);
-                tabs = (List<Tab>)xmls.Deserialize(fs);
-                Console.WriteLine("readed");
-                fs.Close();
-                Console.WriteLine("fs Closed");
+                try
+                {
+                    FileStream fs = new FileStream("test.xml", FileMode.Open);
+                    tabs = (List<Tab>)xmls.Deserialize(fs);
+                    fs.Close();
+                    Console.WriteLine("readed");
+                    Console.WriteLine("fs Closed");
+                }
+                catch (Exception e)
+                {
+                    Frame warn = new Frame(30, 30, 5, 60,"Error",Frame.ColorScheme.Warning);
+                    warn.Show(true);
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                }
             }
             else
             {
@@ -233,7 +243,17 @@ namespace FileManager
             if (clear)
             {
                 FileInfo fi = new FileInfo("test.xml");
-                fi.Delete();
+                try
+                {
+                    fi.Delete();
+                }
+                catch (Exception e)
+                {
+                    Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                    warn.Show(true);
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                }
             }
             else
             {
@@ -245,8 +265,9 @@ namespace FileManager
                 XmlSerializer xmls = new XmlSerializer(typeof(List<Tab>));
                 xmls.Serialize(fs, tabs);
                 fs.Close();
-                Console.ResetColor();
             }
+            Console.ResetColor();
+            Console.CursorVisible = true;
         }
     }
 }

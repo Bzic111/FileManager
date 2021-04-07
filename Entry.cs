@@ -32,9 +32,6 @@ namespace FileManager
         public bool Visible = false;
         public Type type;
 
-        DirectoryInfo DI;
-        FileInfo FI;
-
         public Entry()
         {
 
@@ -46,11 +43,10 @@ namespace FileManager
             Name = path.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1];
             if (type == Type.File)
             {
-                FI = new FileInfo(path);
+                FileInfo FI = new FileInfo(path);
                 long temp = FI.Length;
                 Extension = FI.Extension;
                 LastWrite = FI.LastWriteTime.ToString();
-                FileAttributes fa = File.GetAttributes(path);
                 FullInfo = $"{Extension} {FI.Attributes} {LastWrite}";
                 if (temp < Kbyte)
                 {
@@ -71,7 +67,7 @@ namespace FileManager
             }
             else if (type == Type.Directory)
             {
-                DI = new DirectoryInfo(path);
+                DirectoryInfo DI = new DirectoryInfo(path);
                 LastWrite = Directory.GetLastWriteTime(path).ToString();
                 Extension = "Directory";
                 Size = "".PadRight(12, ' ');
@@ -80,7 +76,7 @@ namespace FileManager
                     Path = DI.Parent.ToString();
                 }
             }
-            ShortInfo = Name.PadRight(40).Remove(37) + Extension.PadRight(10) + Size;
+            ShortInfo = Extension.PadRight(10) + Size;
             string[] tempS = path.Split('\\');
             for (int i = 0; i < tempS.Length - 1; i++)
             {
@@ -90,18 +86,6 @@ namespace FileManager
                     Parent += '\\';
                 }
             }
-        }
-        public Object GetInfoType()
-        {
-            if (this.type == Type.Directory)
-            {
-                return DI;
-            }
-            else if (this.type == Type.File)
-            {
-                return FI;
-            }
-            return null;
-        }
+        }        
     }
 }

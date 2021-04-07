@@ -270,13 +270,12 @@ namespace FileManager
             {
                 try
                 {
-                    DirectoryInfo di = (DirectoryInfo)entry.GetInfoType();
+                    DirectoryInfo di = new DirectoryInfo(entry.Path);
                     di.Delete(true);
                 }
                 catch (Exception e)
                 {
-                    warn.Show();
-                    warn.Clear();
+                    warn.Show(true);
                     warn.WriteText(e.Message);
                     Console.ReadKey(true);
                 }
@@ -285,13 +284,12 @@ namespace FileManager
             {
                 try
                 {
-                    FileInfo fi = (FileInfo)entry.GetInfoType();
+                    FileInfo fi = new FileInfo(entry.Path);
                     fi.Delete();
                 }
                 catch (Exception e)
                 {
-                    warn.Show();
-                    warn.Clear();
+                    warn.Show(true);
                     warn.WriteText(e.Message);
                     Console.ReadKey(true);
                 }
@@ -299,21 +297,18 @@ namespace FileManager
         }
         public void Create(Entry entry, char type)
         {
-            Frame warn = new Frame(30, 30, 5, 60);
-            Frame readConsole = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.ColorScheme.Warning);
-            readConsole.Coloring(Frame.ColorScheme.BIOS);
+            Frame warn = new Frame(30, 30, 5, 60,"Error", Frame.ColorScheme.Warning);
+            Frame readLine = new Frame(30, 30, 5, 60, "Input Name", Frame.ColorScheme.BIOS);
+
             string name;
             switch (type)
             {
                 case 'D':
                 case 'd':
-                    readConsole.Show();
-                    readConsole.Clear();
-                    readConsole.SetName("Input Name");
-                    readConsole.SetColor(Frame.ColorsPreset.ContextNormal);
-                    readConsole.WriteText("".PadRight(readConsole.cols - 2, ' '));
-                    readConsole.SetCursorPosition(0, 0);
+                    readLine.Show(true);
+                    readLine.SetColor(Frame.ColorsPreset.ContextNormal);
+                    readLine.WriteText("".PadRight(readLine.cols - 2, ' '));
+                    readLine.SetCursorPosition(0, 0);
                     name = Console.ReadLine();
                     if (!Directory.Exists(entry.Path + '\\' + name))
                     {
@@ -324,29 +319,24 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            warn.Show();
-                            warn.Clear();
+                            warn.Show(true);
                             warn.WriteText(e.Message);
                             Console.ReadKey(true);
                         }
-
                     }
                     else
                     {
-                        warn.Show();
-                        warn.Clear();
+                        warn.Show(true);
                         warn.WriteText("Directory already exist.");
                         Console.ReadKey(true);
                     }
                     break;
                 case 'F':
                 case 'f':
-                    readConsole.Show();
-                    readConsole.Clear();
-                    readConsole.SetName("Input Name");
-                    readConsole.SetColor(Frame.ColorsPreset.ContextNormal);
-                    readConsole.WriteText("".PadRight(readConsole.cols - 2, ' '));
-                    readConsole.SetCursorPosition(0, 0);
+                    readLine.Show(true);
+                    readLine.SetColor(Frame.ColorsPreset.ContextNormal);
+                    readLine.WriteText("".PadRight(readLine.cols - 2, ' '));
+                    readLine.SetCursorPosition(0, 0);
                     name = Console.ReadLine();
                     if (!File.Exists(entry.Path + '\\' + name))
                     {
@@ -357,16 +347,14 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            warn.Show();
-                            warn.Clear();
+                            warn.Show(true);
                             warn.WriteText(e.Message);
                             Console.ReadKey(true);
                         }
                     }
                     else
                     {
-                        warn.Show();
-                        warn.Clear();
+                        warn.Show(true);
                         warn.WriteText("File already exist.");
                         Console.ReadKey(true);
                     }
@@ -376,19 +364,18 @@ namespace FileManager
         }
         public void Move(Entry entry, string destinationPath)
         {
-            Frame warn = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.ColorScheme.Warning);
+            Frame warn = new Frame(30, 30, 5, 60,"Error", Frame.ColorScheme.Warning);
+
             if (entry.type == Entry.Type.Directory)
             {
                 try
                 {
-                    DirectoryInfo di = (DirectoryInfo)entry.GetInfoType();
+                    DirectoryInfo di = new DirectoryInfo(entry.Path);
                     di.MoveTo(destinationPath);
                 }
                 catch (Exception e)
                 {
-                    warn.Show();
-                    warn.Clear();
+                    warn.Show(true);
                     warn.WriteText(e.Message);
                     Console.ReadKey(true);
                 }
@@ -401,8 +388,7 @@ namespace FileManager
                 }
                 catch (Exception e)
                 {
-                    warn.Show();
-                    warn.Clear();
+                    warn.Show(true);
                     warn.WriteText(e.Message);
                     Console.ReadKey(true);
                 }
@@ -410,13 +396,11 @@ namespace FileManager
         }
         public void CopyDir(DirectoryInfo source, DirectoryInfo target)
         {
-            Frame warn = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.ColorScheme.Warning);
+            Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
 
             if (source.FullName == target.FullName)
             {
-                warn.Show();
-                warn.Clear();
+                warn.Show(true);
                 warn.WriteText("Пути совпадают");
                 Console.ReadKey(true);
             }
@@ -435,8 +419,7 @@ namespace FileManager
                     }
                     catch (Exception e)
                     {
-                        warn.Show();
-                        warn.Clear();
+                        warn.Show(true);
                         warn.WriteText(e.Message);
                         Console.ReadKey(true);
                     }

@@ -129,16 +129,11 @@ namespace FileManager
         /// <param name="path">путь</param>
         public void ChangeDirectory(string path)
         {
+            Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
             if (string.IsNullOrEmpty(path))
             {
-                Frame Error = new Frame(25, 25, 3, 18 + 2);
-                Error.SetName("Error");
-                Error.Coloring(Frame.ColorScheme.Warning);
-                Error.SetColor(Frame.ColorsPreset.Selected);
-                Error.Show();
-                Error.Clear();
-                Error.WriteName();
-                Error.WriteText("Path is not exist");
+                warn.Show(true);
+                warn.WriteText("Bad Path");
                 Console.ReadKey(true);
                 Console.ResetColor();
             }
@@ -151,14 +146,9 @@ namespace FileManager
                 }
                 catch (Exception e)
                 {
-                    Frame Error = new Frame(25, 25, 3, e.Message.Length + 2);
-                    Error.SetName("Error");
-                    Error.Coloring(Frame.ColorScheme.Warning);
-                    Error.SetColor(Frame.ColorsPreset.Selected);
-                    Error.Show();
-                    Error.Clear();
-                    Error.WriteName();
-                    Error.WriteText(e.Message);
+                    warn.Show(true);
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
                     Console.ReadKey(true);
                     Console.ResetColor();
                 }
