@@ -48,12 +48,15 @@ namespace FileManager
 
                 switch (Console.ReadKey(true).Key)
                 {
-                    case ConsoleKey.PageDown:   frame.Go(Frame.To.NextPage, ref page, ref index);       break;
-                    case ConsoleKey.PageUp:     frame.Go(Frame.To.PreviousPage, ref page, ref index);   break;
-                    case ConsoleKey.UpArrow:    frame.Go(Frame.To.StepUp, ref page, ref index);         break;
-                    case ConsoleKey.DownArrow:  frame.Go(Frame.To.StepDown, ref page, ref index);       break;
+                    case ConsoleKey.PageDown:       frame.Go(Frame.To.NextPage, ref page, ref index);       break;
+                    case ConsoleKey.PageUp:         frame.Go(Frame.To.PreviousPage, ref page, ref index);   break;
+                    case ConsoleKey.UpArrow:        frame.Go(Frame.To.StepUp, ref page, ref index);         break;
+                    case ConsoleKey.DownArrow:      frame.Go(Frame.To.StepDown, ref page, ref index);       break;
+                    case ConsoleKey.Applications:                                                           break;
 
-                    case ConsoleKey.LeftArrow:  case ConsoleKey.Escape: default: Cycle = false;         break;
+                    case ConsoleKey.LeftArrow:
+                    case ConsoleKey.Escape:
+                    default:                        Cycle = false;                                          break;
                 }
             } while (Cycle);
         }

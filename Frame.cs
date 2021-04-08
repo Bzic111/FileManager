@@ -66,14 +66,14 @@ namespace FileManager
         private char Liner = '═';
         private char Border = '║';
 
-        public ColorScheme Scheme;
         public int StartCol;
         public int StartRow;
         public int rows;
         public int cols;
+        public int Page;
         public string FrameName = "No Name";
         public string[] Content;
-        public int Page;
+        public ColorScheme Scheme;
         public List<string[]> Pages;
         public Tree tree;
         public Entry entry;
@@ -611,6 +611,5 @@ namespace FileManager
                 }
             } while (reader);
         }
-
     }
 }
