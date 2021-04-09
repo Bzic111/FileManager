@@ -9,9 +9,11 @@ namespace FileManager
     {
         string LogFile = $"Log_{DateTime.Now}.txt";
         public FileStream logger;
-        public Log()
+        public Log(){}
+
+        public void WriteLog(string str)
         {
-            FileStream logger = new FileStream(LogFile, FileMode.OpenOrCreate);
+            File.AppendAllText(LogFile,str + "\n");
         }
     }
 }

@@ -171,9 +171,7 @@ namespace FileManager
         /// </summary>
         public void Refresh(bool content = false, int pge = 0)
         {
-            Show();
-            Clear();
-            WriteName();
+            Show(true);
             if (content)
             {
                 tree.ReFresh();
@@ -479,20 +477,14 @@ namespace FileManager
         /// <param name="index">Индекс элемента</param>
         public void Create(ref int page, ref int index)
         {
-            Frame question = new Frame(30, 30, 5, 60);
-            question.Show();
-            question.SetName("Creating");
-            question.WriteName();
+            Frame question = new Frame(30, 30, 5, 60, "Creating",ColorScheme.BIOS);
+            question.Show(true);
             question.WriteText($"Create Directory or File? [D/F] ?");
             var q = Console.ReadKey(true);
             comand.Create(tree.Pages[page][index], q.KeyChar);
-
-            tree.ReFresh();
+            Refresh(true);
             page = 0;
             index = 0;
-            Refresh();
-            GetContentFromTree(tree);
-            ShowContentFromTree(page);
         }
 
         /// <summary>
@@ -508,13 +500,13 @@ namespace FileManager
             question.WriteName();
             question.WriteText($"Delete {tree.Pages[page][index].Name} Y/N ?");
             var q = Console.ReadKey(true);
-            comand.Delete(tree.Pages[page][index]);
-            tree.ReFresh();
-            page = 0;
-            index = 0;
-            Refresh();
-            GetContentFromTree(tree);
-            ShowContentFromTree(page);
+            if (q.Key == ConsoleKey.Q)
+            {
+                comand.Delete(tree.Pages[page][index]);
+                Refresh(true);
+                page = 0;
+                index = 0;
+            }
         }
 
         /// <summary>
@@ -523,6 +515,7 @@ namespace FileManager
         /// <param name="memory">Список ввода</param>
         public void ConsoleReader(List<string> memory, out bool refresh)
         {
+            Program.WriteLog("Reading command.");
             StringBuilder consoleReader = new StringBuilder();
             refresh = false;
             bool reader = true;
@@ -581,6 +574,7 @@ namespace FileManager
                         if (!string.IsNullOrEmpty(consoleLine))
                         {
                             memory.Add(consoleLine);
+                            Program.WriteLog("Input command : "+consoleLine);
                         }
                         comand.Reader(consoleLine, ref tree, tree.Pages[page][index], out refresh);
                         consoleReader.Clear();
@@ -610,6 +604,7 @@ namespace FileManager
                         break;
                 }
             } while (reader);
+            Program.WriteLog("Reader end.");
         }
     }
 }

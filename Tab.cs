@@ -26,7 +26,7 @@ namespace FileManager
                 WorkFrame = new Frame(0, 0, 41, 150, "Tab", Frame.ColorScheme.Default);
                 WorkFrame.tree = new Tree();
 
-                Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count + 1, 10, "Drive", Frame.ColorScheme.Default);
+                Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count + 1, 10, "Drive", Frame.ColorScheme.BIOS);
                 for (int i = 0; i < WorkFrame.tree.Roots.Count; i++)
                 {
                     fr.SetContent(i, WorkFrame.tree.Roots[i]);

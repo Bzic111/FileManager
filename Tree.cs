@@ -33,7 +33,7 @@ namespace FileManager
         /// </summary>
         public List<string> Roots { get; private set; }
 
-        
+
         public Tree() => SetRoots();
 
         /// <summary>
@@ -50,6 +50,7 @@ namespace FileManager
                 }
             }
             Roots = drives;
+            Program.WriteLog("Get Drives for new tree.");
         }
 
         /// <summary>
@@ -83,14 +84,19 @@ namespace FileManager
             }
             catch (UnauthorizedAccessException e)
             {
-                Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                Error.SetName("Acces Denied");
-                Error.Coloring(Frame.ColorScheme.Warning);
-                Error.SetColor(Frame.ColorsPreset.Normal);
-                Error.Show();
-                Error.Clear();
-                Error.WriteName();
+                Frame Error = new Frame(30, 30, 5, e.Message.Length + 2, "Acces Denied", Frame.ColorScheme.Warning);
+                Error.Show(true);
                 Error.WriteText(e.Message);
+                Program.WriteLog("Acces to " + path + " is denied");
+                Console.ResetColor();
+                Console.ReadKey(true);
+            }
+            catch (Exception e)
+            {
+                Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                warn.Show(true);
+                warn.WriteText(e.Message);
+                Program.WriteLog(e.Message);
                 Console.ResetColor();
                 Console.ReadKey(true);
             }
@@ -134,24 +140,14 @@ namespace FileManager
             {
                 warn.Show(true);
                 warn.WriteText("Bad Path");
-                Console.ReadKey(true);
+                Program.WriteLog("Change directory fail : path string is empty.");
                 Console.ResetColor();
+                Console.ReadKey(true);
             }
             else
             {
-                try
-                {
-                    GetEntryList(path);
-                    GetPages(Entryes);
-                }
-                catch (Exception e)
-                {
-                    warn.Show(true);
-                    warn.WriteText(e.Message);
-                    Console.ReadKey(true);
-                    Console.ReadKey(true);
-                    Console.ResetColor();
-                }
+                GetEntryList(path);
+                GetPages(Entryes);
             }
         }
     }

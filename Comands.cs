@@ -15,6 +15,7 @@ namespace FileManager
         }
         public void Reader(string str, ref Tree tree, Entry entry, out bool reFreshFrame)
         {
+            Frame Error = new Frame(30, 30, 5, 40, "Error", Frame.ColorScheme.Warning);
             string[] inLine = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             reFreshFrame = false;
             string comand = null;
@@ -87,7 +88,6 @@ namespace FileManager
                 case "Del":
                     if (Directory.Exists(path))
                     {
-
                         try
                         {
                             DirectoryInfo dif = new DirectoryInfo(entry.Path + path);
@@ -96,14 +96,10 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                            Error.SetName("Error");
-                            Error.Coloring(Frame.ColorScheme.Warning);
-                            Error.SetColor(Frame.ColorsPreset.Normal);
-                            Error.Show();
-                            Error.Clear();
-                            Error.WriteName();
+
+                            Error.Show(true);
                             Error.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
                             Console.ResetColor();
                             Console.ReadKey(true);
                         }
@@ -117,18 +113,12 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                            Error.SetName("Error");
-                            Error.Coloring(Frame.ColorScheme.Warning);
-                            Error.SetColor(Frame.ColorsPreset.Normal);
-                            Error.Show();
-                            Error.Clear();
-                            Error.WriteName();
+                            Error.Show(true);
                             Error.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
                             Console.ResetColor();
                             Console.ReadKey(true);
                         }
-
                     }
                     break;
                 case "new":
@@ -144,14 +134,9 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                            Error.SetName("Acces Denied");
-                            Error.Coloring(Frame.ColorScheme.Warning);
-                            Error.SetColor(Frame.ColorsPreset.Normal);
-                            Error.Show();
-                            Error.Clear();
-                            Error.WriteName();
+                            Error.Show(true);
                             Error.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
                             Console.ResetColor();
                             Console.ReadKey(true);
                         }
@@ -166,14 +151,9 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                            Error.SetName("Error");
-                            Error.Coloring(Frame.ColorScheme.Warning);
-                            Error.SetColor(Frame.ColorsPreset.Normal);
-                            Error.Show();
-                            Error.Clear();
-                            Error.WriteName();
+                            Error.Show(true);
                             Error.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
                             Console.ResetColor();
                             Console.ReadKey(true);
                         }
@@ -190,14 +170,9 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                            Error.SetName("Acces Denied");
-                            Error.Coloring(Frame.ColorScheme.Warning);
-                            Error.SetColor(Frame.ColorsPreset.Normal);
-                            Error.Show();
-                            Error.Clear();
-                            Error.WriteName();
+                            Error.Show(true);
                             Error.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
                             Console.ResetColor();
                             Console.ReadKey(true);
                         }
@@ -214,14 +189,9 @@ namespace FileManager
                         }
                         catch (Exception e)
                         {
-                            Frame Error = new Frame(30, 30, 5, e.Message.Length + 2);
-                            Error.SetName("Acces Denied");
-                            Error.Coloring(Frame.ColorScheme.Warning);
-                            Error.SetColor(Frame.ColorsPreset.Normal);
-                            Error.Show();
-                            Error.Clear();
-                            Error.WriteName();
+                            Error.Show(true);
                             Error.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
                             Console.ResetColor();
                             Console.ReadKey(true);
                         }
@@ -229,42 +199,31 @@ namespace FileManager
                     else if (File.Exists(attr))
                     {
                         string errorStr = $"File {attr} already exist";
-                        Frame Error = new Frame(30, 30, 5, errorStr.Length + 2);
-                        Error.SetName("File exist");
-                        Error.Coloring(Frame.ColorScheme.Warning);
-                        Error.SetColor(Frame.ColorsPreset.Normal);
-                        Error.Show();
-                        Error.Clear();
-                        Error.WriteName();
+                        Error.Show(true);
                         Error.WriteText(errorStr);
+                        Program.WriteLog(errorStr);
                         Console.ResetColor();
                         Console.ReadKey(true);
                     }
                     else if (!File.Exists(entry.Path + path))
                     {
                         string errorStr = $"File {path} not exist";
-                        Frame Error = new Frame(30, 30, 5, errorStr.Length + 2);
-                        Error.SetName("File not exist");
-                        Error.Coloring(Frame.ColorScheme.Warning);
-                        Error.SetColor(Frame.ColorsPreset.Normal);
-                        Error.Show();
-                        Error.Clear();
-                        Error.WriteName();
+                        Error.Show(true);
                         Error.WriteText(errorStr);
+                        Program.WriteLog(errorStr);
                         Console.ResetColor();
                         Console.ReadKey(true);
                     }
                     break;
                 default:
                     Console.Write("Bad Comand!");
+                    Program.WriteLog("Bad Comand!");
                     break;
             }
-
         }
         public void Delete(Entry entry)
         {
-            Frame warn = new Frame(30, 30, 5, 60);
-            warn.Coloring(Frame.ColorScheme.Warning);
+            Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
 
             if (entry.type == Entry.Type.Directory)
             {
@@ -272,11 +231,14 @@ namespace FileManager
                 {
                     DirectoryInfo di = new DirectoryInfo(entry.Path);
                     di.Delete(true);
+                    Program.WriteLog($"Directory {entry.Path} deleted.");
                 }
                 catch (Exception e)
                 {
                     warn.Show(true);
                     warn.WriteText(e.Message);
+                    Program.WriteLog(e.Message);
+                    Console.ResetColor();
                     Console.ReadKey(true);
                 }
             }
@@ -286,18 +248,21 @@ namespace FileManager
                 {
                     FileInfo fi = new FileInfo(entry.Path);
                     fi.Delete();
+                    Program.WriteLog($"File {entry.Path} deleted.");
                 }
                 catch (Exception e)
                 {
                     warn.Show(true);
                     warn.WriteText(e.Message);
+                    Program.WriteLog(e.Message);
+                    Console.ResetColor();
                     Console.ReadKey(true);
                 }
             }
         }
         public void Create(Entry entry, char type)
         {
-            Frame warn = new Frame(30, 30, 5, 60,"Error", Frame.ColorScheme.Warning);
+            Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
             Frame readLine = new Frame(30, 30, 5, 60, "Input Name", Frame.ColorScheme.BIOS);
 
             string name;
@@ -310,17 +275,20 @@ namespace FileManager
                     readLine.WriteText("".PadRight(readLine.cols - 2, ' '));
                     readLine.SetCursorPosition(0, 0);
                     name = Console.ReadLine();
-                    if (!Directory.Exists(entry.Path + '\\' + name))
+                    if (!Directory.Exists($"{entry.Path}\\{name}"))
                     {
                         try
                         {
-                            DirectoryInfo di = new DirectoryInfo(entry.Path + '\\' + name);
+                            DirectoryInfo di = new DirectoryInfo($"{entry.Path}\\{name}");
                             di.Create();
+                            Program.WriteLog($"Created new directory {entry.Path}\\{name}");
                         }
                         catch (Exception e)
                         {
                             warn.Show(true);
                             warn.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
+                            Console.ResetColor();
                             Console.ReadKey(true);
                         }
                     }
@@ -328,6 +296,8 @@ namespace FileManager
                     {
                         warn.Show(true);
                         warn.WriteText("Directory already exist.");
+                        Program.WriteLog($"Failed to create new directory {entry.Path}\\{name}");
+                        Console.ResetColor();
                         Console.ReadKey(true);
                     }
                     break;
@@ -338,17 +308,20 @@ namespace FileManager
                     readLine.WriteText("".PadRight(readLine.cols - 2, ' '));
                     readLine.SetCursorPosition(0, 0);
                     name = Console.ReadLine();
-                    if (!File.Exists(entry.Path + '\\' + name))
+                    if (!File.Exists($"{entry.Path}\\{name}"))
                     {
                         try
                         {
-                            FileStream fs = File.Create(entry.Path + '\\' + name);
+                            FileStream fs = File.Create($"{entry.Path}\\{name}");
                             fs.Close();
+                            Program.WriteLog($"Created new file {entry.Path}\\{name}");
                         }
                         catch (Exception e)
                         {
                             warn.Show(true);
                             warn.WriteText(e.Message);
+                            Program.WriteLog(e.Message);
+                            Console.ResetColor();
                             Console.ReadKey(true);
                         }
                     }
@@ -356,6 +329,8 @@ namespace FileManager
                     {
                         warn.Show(true);
                         warn.WriteText("File already exist.");
+                        Program.WriteLog($"Failed to create new file {entry.Path}\\{name}");
+                        Console.ResetColor();
                         Console.ReadKey(true);
                     }
                     break;
@@ -364,7 +339,7 @@ namespace FileManager
         }
         public void Move(Entry entry, string destinationPath)
         {
-            Frame warn = new Frame(30, 30, 5, 60,"Error", Frame.ColorScheme.Warning);
+            Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
 
             if (entry.type == Entry.Type.Directory)
             {
@@ -372,11 +347,14 @@ namespace FileManager
                 {
                     DirectoryInfo di = new DirectoryInfo(entry.Path);
                     di.MoveTo(destinationPath);
+                    Program.WriteLog($"Directory {entry.Path} moved to {destinationPath}");
                 }
                 catch (Exception e)
                 {
                     warn.Show(true);
                     warn.WriteText(e.Message);
+                    Program.WriteLog(e.Message);
+                    Console.ResetColor();
                     Console.ReadKey(true);
                 }
             }
@@ -385,11 +363,14 @@ namespace FileManager
                 try
                 {
                     File.Move(entry.Path, destinationPath);
+                    Program.WriteLog($"File {entry.Path} moved to {destinationPath}");
                 }
                 catch (Exception e)
                 {
                     warn.Show(true);
                     warn.WriteText(e.Message);
+                    Program.WriteLog(e.Message);
+                    Console.ResetColor();
                     Console.ReadKey(true);
                 }
             }

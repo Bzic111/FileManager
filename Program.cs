@@ -26,6 +26,7 @@ namespace FileManager
     }
     class Program
     {
+        static string LogFile = $"Log_{DateTime.Now}.txt";
         static public List<Tab> Tabs;
         static List<string> ComMemory = new List<string>();
 
@@ -210,10 +211,15 @@ namespace FileManager
             }
         }
 
+        static public void WriteLog(string str)
+        {
+            File.AppendAllText(LogFile, DateTime.Now.ToString() + str + "\n");
+        }
         static void Start(ref List<Tab> tabs, ref int index, ref int page, ref int tabIndexer)
         {
             Console.ResetColor();
             Console.Clear();
+            WriteLog("\tStart.");
             if (File.Exists("test.xml"))
             {
                 XmlSerializer xmls = new XmlSerializer(typeof(List<Tab>));
@@ -222,8 +228,7 @@ namespace FileManager
                     FileStream fs = new FileStream("test.xml", FileMode.Open);
                     tabs = (List<Tab>)xmls.Deserialize(fs);
                     fs.Close();
-                    Console.WriteLine("readed");
-                    Console.WriteLine("fs Closed");
+                    WriteLog("Last state readed from test.xml");
                 }
                 catch (Exception e)
                 {
@@ -231,6 +236,7 @@ namespace FileManager
                     warn.Show(true);
                     warn.WriteText(e.Message);
                     Console.ReadKey(true);
+                    WriteLog("Loading Last state error"+ "".PadRight(DateTime.Now.ToString().Length, ' ') + e.Message);
                 }
             }
             else
@@ -240,15 +246,13 @@ namespace FileManager
                 tabIndexer = 0;
                 tabs = new List<Tab>();
                 tabs.Add(new Tab(true));
-                Console.WriteLine("notread");
+                WriteLog("Initialize new session.");
             }
-            // find file json\xml if(true) load file json\xml else init new List<Tab>(new Tab) show root selector frame
-            // if(true) create List<Tab> else init new List<Tab>
             Console.Clear();
         }
         static void Exit(List < Tab> tabs, ref int index, ref int page, ref int tabIndexer, bool clear = false)
         {
-            if (clear)
+            if (clear & File.Exists("test.xml"))
             {
                 FileInfo fi = new FileInfo("test.xml");
                 try
@@ -263,19 +267,48 @@ namespace FileManager
                     Console.ReadKey(true);
                 }
             }
+            else if (File.Exists("test.xml"))
+            {
+                try
+                {
+                    FileStream fs = new FileStream("test.xml", FileMode.OpenOrCreate);
+                    XmlSerializer xmls = new XmlSerializer(typeof(List<Tab>));
+                    xmls.Serialize(fs, tabs);
+                    fs.Close();
+                    WriteLog("Last state saved to test.xml");
+                }
+                catch (Exception e)
+                {
+                    Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                    warn.Show(true);
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                    WriteLog("Last state saving fail \n" + "".PadRight(DateTime.Now.ToString().Length, ' ') + e.Message);
+                }
+            }
             else
             {
-                LastState sm = new LastState(tabs);
-                sm.index = index;
-                sm.page = page;
-                sm.tabIndexer = tabIndexer;
-                FileStream fs = new FileStream("test.xml", FileMode.OpenOrCreate);
-                XmlSerializer xmls = new XmlSerializer(typeof(List<Tab>));
-                xmls.Serialize(fs, tabs);
-                fs.Close();
+                try
+                {
+                    FileStream fs = new FileStream("test.xml", FileMode.OpenOrCreate);
+                    XmlSerializer xmls = new XmlSerializer(typeof(List<Tab>));
+                    xmls.Serialize(fs, tabs);
+                    fs.Close();
+                    WriteLog("Last state saved to test.xml");
+                }
+                catch (Exception e)
+                {
+                    Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                    warn.Show(true);
+                    warn.WriteText(e.Message);
+                    Console.ReadKey(true);
+                    WriteLog("Last state saving fail \n" + "".PadRight(DateTime.Now.ToString().Length, ' ') + e.Message);
+                }
             }
+            WriteLog("End Programm.");
             Console.ResetColor();
             Console.CursorVisible = true;
         }
+
     }
 }
