@@ -14,8 +14,6 @@ namespace FileManager
     public class LastState
     {
         public List<Tab> Tabs;
-        public int index = 0;
-        public int page = 0;
         public int tabIndexer = 0;
         public LastState()
         {
