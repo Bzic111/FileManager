@@ -412,7 +412,5 @@ namespace FileManager
                 }
             }
         }
-
-
     }
 }
