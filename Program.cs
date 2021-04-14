@@ -250,7 +250,7 @@ namespace FileManager
             }
             Console.Clear();
         }
-        static void Exit(List < Tab> tabs, ref int index, ref int page, ref int tabIndexer, bool clear = false)
+        static void Exit(List<Tab> tabs, ref int index, ref int page, ref int tabIndexer, bool clear = false)
         {
             if (clear & File.Exists("test.xml"))
             {
