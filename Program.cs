@@ -26,7 +26,7 @@ namespace FileManager
     }
     class Program
     {
-        static string LogFile = $"Log_{DateTime.Now}.txt";
+        static string LogFile = $"Log_{DateTime.Today.Date.ToString("D")}.txt";
         static public List<Tab> Tabs;
         static List<string> ComMemory = new List<string>();
 
@@ -140,25 +140,11 @@ namespace FileManager
                 {
                     case ConsoleKey.LeftArrow:
                         frame.WriteTextHorizontal(frame.Content[count], count * 10, 0);
-                        if (count > 0)
-                        {
-                            count--;
-                        }
-                        else
-                        {
-                            count = frame.Content.Length - 1;
-                        }
+                        count = count > 0 ? count - 1 : frame.Content.Length - 1;
                         break;
                     case ConsoleKey.RightArrow:
                         frame.WriteTextHorizontal(frame.Content[count], count * 10, 0);
-                        if (count < frame.Content.Length - 1)
-                        {
-                            count++;
-                        }
-                        else
-                        {
-                            count = 0;
-                        }
+                        count = count < frame.Content.Length - 1 ? count + 1 : 0;
                         break;
                     case ConsoleKey.Enter:
                         counter = count;
@@ -211,10 +197,7 @@ namespace FileManager
             }
         }
 
-        static public void WriteLog(string str)
-        {
-            File.AppendAllText(LogFile, DateTime.Now.ToString() + str + "\n");
-        }
+        static public void WriteLog(string str) => File.AppendAllText(LogFile, DateTime.Now.ToString("D") + str + "\n");
         static void Start(ref List<Tab> tabs, ref int index, ref int page, ref int tabIndexer)
         {
             Console.ResetColor();

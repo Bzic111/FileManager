@@ -10,7 +10,7 @@ namespace FileManager
     [Serializable]
     public class Tab
     {
-        public string Name { get => WorkFrame.tree.CurrentPath.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1]; set => Name = value; }
+        public string Name { get => Name; set => Name = value; } //WorkFrame.tree.CurrentPath.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1]
         public int Page = 0;
         public int index = 0;
         public Frame WorkFrame;
@@ -26,13 +26,14 @@ namespace FileManager
                 WorkFrame = new Frame(0, 0, 41, 150, "Tab", Frame.ColorScheme.Default);
                 WorkFrame.tree = new Tree();
 
-                Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count + 1, 10, "Drive", Frame.ColorScheme.BIOS);
+                Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count, 10, "Drive", Frame.ColorScheme.BIOS);
                 for (int i = 0; i < WorkFrame.tree.Roots.Count; i++)
                 {
                     fr.SetContent(i, WorkFrame.tree.Roots[i]);
                 }
+                fr.SetPages(WorkFrame.tree.Roots);
                 WorkFrame.tree.ChangeDirectory(RootSelect(WorkFrame.tree.Roots, fr));
-                Name = WorkFrame.tree.CurrentPath.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1];
+                //Name = WorkFrame.tree.CurrentPath; //.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1]
             }
         }
         public Tab(string path, bool newTab = true)
@@ -81,25 +82,11 @@ namespace FileManager
                 {
                     case ConsoleKey.UpArrow:
                         fr.WriteText(str[index], 0, index);
-                        if (index > 0)
-                        {
-                            index--;
-                        }
-                        else
-                        {
-                            index = str.Count - 1;
-                        }
+                        index = index > 0 ? index - 1 : str.Count - 1;
                         break;
                     case ConsoleKey.DownArrow:
                         fr.WriteText(str[index], 0, index);
-                        if (index < str.Count - 1)
-                        {
-                            index++;
-                        }
-                        else
-                        {
-                            index = 0;
-                        }
+                        index = index < str.Count - 1 ? index + 1 : 0;
                         break;
                     case ConsoleKey.Escape:
                         rootSelectorCycle = false;

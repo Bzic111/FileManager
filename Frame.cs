@@ -338,7 +338,18 @@ namespace FileManager
                 }
             }
         }
-
+        public void SetPages(List<string> str)
+        {
+            Pages = new List<string[]>();
+            for (int i = 0, counter = 0; counter < str.Count; i++)
+            {
+                Pages.Add(new string[rows]);
+                for (int j = 0; j < rows & counter < str.Count; j++, counter++)
+                {
+                    Pages[i][j] = str[counter];
+                }
+            }
+        }
         /// <summary>
         /// Установка контента фрейма.
         /// </summary>
