@@ -50,7 +50,7 @@ namespace FileManager
                 }
             }
             Roots = drives;
-            Program.WriteLog("Get Drives for new tree.");
+            Meth.WriteLog("Get Drives for new tree.");
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace FileManager
                 Frame Error = new Frame(30, 30, 5, e.Message.Length + 2, "Acces Denied", Frame.ColorScheme.Warning);
                 Error.Show(true);
                 Error.WriteText(e.Message);
-                Program.WriteLog("Acces to " + path + " is denied");
+                Meth.WriteLog("Acces to " + path + " is denied");
                 Console.ResetColor();
                 Console.ReadKey(true);
             }
@@ -96,7 +96,7 @@ namespace FileManager
                 Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
                 warn.Show(true);
                 warn.WriteText(e.Message);
-                Program.WriteLog(e.Message);
+                Meth.WriteLog(e.Message);
                 Console.ResetColor();
                 Console.ReadKey(true);
             }
@@ -140,7 +140,7 @@ namespace FileManager
             {
                 warn.Show(true);
                 warn.WriteText("Bad Path");
-                Program.WriteLog("Change directory fail : path string is empty.");
+                Meth.WriteLog("Change directory fail : path string is empty.");
                 Console.ResetColor();
                 Console.ReadKey(true);
             }

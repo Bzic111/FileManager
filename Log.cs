@@ -7,13 +7,12 @@ namespace FileManager
 {
     class Log
     {
-        string LogFile = $"Log_{DateTime.Now}.txt";
-        public FileStream logger;
-        public Log(){}
+        string LogFile = $@"Log_{DateTime.Now:d}.txt";
+        public Log() { }
 
         public void WriteLog(string str)
         {
-            File.AppendAllText(LogFile,str + "\n");
+            File.AppendAllText(LogFile, str + "\n");
         }
     }
 }

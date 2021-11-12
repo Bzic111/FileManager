@@ -10,7 +10,7 @@ namespace FileManager
     [Serializable]
     public class Tab
     {
-        public string Name { get => WorkFrame.tree.CurrentPath.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1]; set => Name = value; }
+        public string Name;
         public int Page = 0;
         public int index = 0;
         public Frame WorkFrame;
@@ -27,12 +27,9 @@ namespace FileManager
                 WorkFrame.tree = new Tree();
 
                 Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count + 1, 10, "Drive", Frame.ColorScheme.BIOS);
-                for (int i = 0; i < WorkFrame.tree.Roots.Count; i++)
-                {
-                    fr.SetContent(i, WorkFrame.tree.Roots[i]);
-                }
+                for (int i = 0; i < WorkFrame.tree.Roots.Count; i++) fr.SetContent(i, WorkFrame.tree.Roots[i]);
                 WorkFrame.tree.ChangeDirectory(RootSelect(WorkFrame.tree.Roots, fr));
-                Name = WorkFrame.tree.CurrentPath.Split('\\', StringSplitOptions.RemoveEmptyEntries)[^1];
+                Name = WorkFrame.tree.Pages[0][0].Name;
             }
         }
         public Tab(string path, bool newTab = true)
@@ -68,8 +65,8 @@ namespace FileManager
         {
             bool rootSelectorCycle = true;
             int index = 0;
-            fr.Show(true, true, Frame.ColorsPreset.Normal);
-
+            fr.Show(true, false, Frame.ColorsPreset.Normal);
+            fr.ShowContent();
             do
             {
                 fr.SetColor(Frame.ColorsPreset.Selected);

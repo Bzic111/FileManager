@@ -12,53 +12,12 @@ namespace FileManager
     /// Фрейм.
     /// </summary>
     [Serializable]
-    public class Frame
+    public partial class Frame
     {
-        /// <summary>
-        /// Цветовая схема
-        /// </summary>
-        public enum ColorScheme
-        {
-            Default,
-            BIOS,
-            Warning
-        }
-
-        /// <summary>
-        /// Предустановленные цветовые сочетания
-        /// </summary>
-        public enum ColorsPreset
-        {
-            Normal,
-            Selected,
-            ContextNormal,
-            ContextSelected,
-            Standart
-        }
-
-        /// <summary>
-        /// Ключи для переходов внутри списка дерева
-        /// </summary>
-        public enum To
-        {
-            StepBack,
-            StepForward,
-            NextPage,
-            PreviousPage,
-            FirstPage,
-            LastPage,
-            StepUp,
-            StepDown
-        }
-
-        private ConsoleColor NormalBackGround;
-        private ConsoleColor SelectedBackGround;
-        private ConsoleColor NormalText;
-        private ConsoleColor SelectedText;
-        private ConsoleColor ContexMenuNormalBackGround;
-        private ConsoleColor ContexMenuSelectedBackGround;
-        private ConsoleColor SelectedContext;
-        private ConsoleColor NormalContext;
+        private Colors Colors { get; set; }
+        public Coordinates Geometry { get; private set; }
+        public ColorScheme Scheme { get; private set; }
+        private (char LeftUpCorner, char LeftDownCorner, char RightUpCorner,char RightDownCorner, char Liner,char Border) Symbols { get; set; }
         private char LeftUpCorner = '╔';
         private char LeftDownCorner = '╚';
         private char RightUpCorner = '╗';
@@ -66,31 +25,24 @@ namespace FileManager
         private char Liner = '═';
         private char Border = '║';
 
-        public int StartCol;
-        public int StartRow;
-        public int rows;
-        public int cols;
         public int Page;
         public string FrameName = "No Name";
         public string[] Content;
-        public ColorScheme Scheme;
         public List<string[]> Pages;
         public Tree tree;
         public Entry entry;
 
-        int page;
-        int index;
+        int page = 0;
+        int index = 0;
         Comands comand;
 
         public Frame()
         {
             comand = new Comands();
-            Coloring(Scheme);            
+            Coloring(Scheme);
         }
 
-        /// <summary>
-        /// Создание фрейма.
-        /// </summary>
+        /// <summary>Создание фрейма</summary>
         /// <param name="startCol">Начальный столбец</param>
         /// <param name="startRow">Начальная строка</param>
         /// <param name="rws">количество строк</param>
@@ -99,14 +51,21 @@ namespace FileManager
         public Frame(int startCol, int startRow, int rws, int cls, string frameName = "No Name", ColorScheme scheme = ColorScheme.Default)
         {
             comand = new Comands();
-            StartCol = startCol;
-            StartRow = startRow;
-            rows = rws;
-            cols = cls;
+            Geometry = (StartCol: startCol, StartRow: startRow, rows: rws, cols: cls);
             FrameName = frameName;
             Scheme = scheme;
             Coloring(Scheme);
-            Content = new string[rows - 1];
+            Content = new string[Geometry.rows - 1];
+        }
+
+        public Frame((int startCol, int startRow, int rws, int cls) geometry, string frameName = "No Name", ColorScheme scheme = ColorScheme.Default)
+        {
+            Geometry = Geometry;
+            FrameName = frameName;
+            Scheme = scheme;
+            Coloring(Scheme);
+            Content = new string[Geometry.rows - 1];
+            comand = new Comands();
         }
 
         /// <summary>
@@ -117,34 +76,22 @@ namespace FileManager
         /// <param name="preset">Сочетания цветов</param>
         public void Show(bool clear = false, bool content = false, ColorsPreset preset = ColorsPreset.Normal)
         {
-            if(Console.WindowWidth < StartCol + cols)
-            {
-                Console.WindowWidth = StartCol + cols;
-            }
-            if (Console.WindowHeight < StartRow + rows + 8)
-            {
-                Console.WindowHeight = StartRow + rows + 8;
-            }
+            Console.WindowWidth = Console.WindowWidth < Geometry.StartCol + Geometry.cols ? Geometry.StartCol + Geometry.cols : Console.WindowWidth;
+            Console.WindowHeight = Console.WindowHeight < Geometry.StartRow + Geometry.rows + 8 ? Geometry.StartRow + Geometry.rows + 8 : Console.WindowHeight;
             SetColor(preset);
-            Console.SetCursorPosition(StartCol, StartRow);
-            Console.Write($"{LeftUpCorner}".PadRight(cols - 1, Liner) + RightUpCorner);
-            if (!string.IsNullOrEmpty(FrameName))
+            Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow);
+            Console.Write($"{LeftUpCorner}".PadRight(Geometry.cols - 1, Liner) + RightUpCorner);
+            if (!string.IsNullOrEmpty(FrameName)) WriteName();
+            for (int i = 1; i < Geometry.rows; i++)
             {
-                WriteName();
-            }
-            for (int i = 1; i < rows; i++)
-            {
-                Console.SetCursorPosition(StartCol, StartRow + i);
+                Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow + i);
                 Console.Write(Border);
-                Console.SetCursorPosition(StartCol + cols - 1, StartRow + i);
+                Console.SetCursorPosition(Geometry.StartCol + Geometry.cols - 1, Geometry.StartRow + i);
                 Console.Write($"{Border}");
             }
-            Console.SetCursorPosition(StartCol, StartRow + rows);
-            Console.Write($"{LeftDownCorner}".PadRight(cols - 1, Liner) + RightDownCorner);
-            if (clear)
-            {
-                Clear();
-            }
+            Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow + Geometry.rows);
+            Console.Write($"{LeftDownCorner}".PadRight(Geometry.cols - 1, Liner) + RightDownCorner);
+            if (clear) Clear();
             if (content)
             {
                 SetColor(ColorsPreset.Normal);
@@ -153,22 +100,18 @@ namespace FileManager
             Console.ResetColor();
         }
 
-        /// <summary>
-        /// Очистка области фрейма
-        /// </summary>
+        /// <summary>Очистка области фрейма</summary>
         public void Clear()
         {
             SetColor(ColorsPreset.Normal);
-            for (int i = 0; i < rows - 1; i++)
+            for (int i = 0; i < Geometry.rows - 1; i++)
             {
-                Console.SetCursorPosition(StartCol + 1, StartRow + 1 + i);
-                Console.Write("".PadRight(cols - 2, ' '));
+                Console.SetCursorPosition(Geometry.StartCol + 1, Geometry.StartRow + 1 + i);
+                Console.Write("".PadRight(Geometry.cols - 2, ' '));
             }
         }
 
-        /// <summary>
-        /// Обновить фрейм
-        /// </summary>
+        /// <summary>Обновить фрейм</summary>
         public void Refresh(bool content = false, int pge = 0)
         {
             Show(true);
@@ -180,9 +123,7 @@ namespace FileManager
             }
         }
 
-        /// <summary>
-        /// Установка сочетаний цветов для фрейма по цветовой схеме
-        /// </summary>
+        /// <summary>Установка сочетаний цветов для фрейма по цветовой схеме</summary>
         /// <param name="scheme">Цветовая схема</param>
         public void Coloring(ColorScheme scheme)
         {
@@ -190,90 +131,84 @@ namespace FileManager
             switch (scheme)
             {
                 case ColorScheme.BIOS:
-                    NormalBackGround =              ConsoleColor.Blue;
-                    SelectedBackGround =            ConsoleColor.Red;
-
-                    NormalText =                    ConsoleColor.Yellow;
-                    SelectedText =                  ConsoleColor.White;
-                    
-                    ContexMenuNormalBackGround =    ConsoleColor.Yellow;
-                    ContexMenuSelectedBackGround =  ConsoleColor.Red;
-                    
-                    SelectedContext =               ConsoleColor.Yellow;
-                    NormalContext =                 ConsoleColor.Black;
+                    Colors = (
+                    NormalBackGround : ConsoleColor.Blue,
+                    SelectedBackGround : ConsoleColor.Red,
+                    NormalText : ConsoleColor.Yellow,
+                    SelectedText: ConsoleColor.White,
+                    ContexMenuNormalBackGround: ConsoleColor.Yellow,
+                    ContexMenuSelectedBackGround: ConsoleColor.Red,
+                    SelectedContext: ConsoleColor.Yellow,
+                    NormalContext: ConsoleColor.Black);
                     break;
                 case ColorScheme.Warning:
-                    NormalBackGround =              ConsoleColor.Red;
-                    SelectedBackGround =            ConsoleColor.White;
-                    
-                    NormalText =                    ConsoleColor.Yellow;
-                    SelectedText =                  ConsoleColor.Red;
-                    
-                    ContexMenuNormalBackGround =    ConsoleColor.Yellow;
-                    ContexMenuSelectedBackGround =  ConsoleColor.DarkRed;
-                    
-                    SelectedContext =               ConsoleColor.Yellow;
-                    NormalContext =                 ConsoleColor.Black;
+                    Colors = (
+                    NormalBackGround: ConsoleColor.Red,
+                    SelectedBackGround: ConsoleColor.White,
+                    NormalText: ConsoleColor.Yellow,
+                    SelectedText: ConsoleColor.Red,
+                    ContexMenuNormalBackGround: ConsoleColor.Yellow,
+                    ContexMenuSelectedBackGround: ConsoleColor.DarkRed,
+                    SelectedContext: ConsoleColor.Yellow,
+                    NormalContext: ConsoleColor.Black);
                     break;
                 case ColorScheme.Default:
                 default:
-                    NormalBackGround =              ConsoleColor.Black;
-                    SelectedBackGround =            ConsoleColor.White;
-                    
-                    NormalText =                    ConsoleColor.White;
-                    SelectedText =                  ConsoleColor.Black;
-                    
-                    ContexMenuNormalBackGround =    ConsoleColor.Gray;
-                    ContexMenuSelectedBackGround =  ConsoleColor.Yellow;
-                    
-                    SelectedContext =               ConsoleColor.Red;
-                    NormalContext =                 ConsoleColor.Black;
+                    Colors = (
+                    NormalBackGround: ConsoleColor.Black,
+                    SelectedBackGround: ConsoleColor.White,
+                    NormalText: ConsoleColor.White,
+                    SelectedText: ConsoleColor.Black,
+                    ContexMenuNormalBackGround: ConsoleColor.Gray,
+                    ContexMenuSelectedBackGround: ConsoleColor.Yellow,
+                    SelectedContext: ConsoleColor.Red,
+                    NormalContext: ConsoleColor.Black);
                     break;
             }
         }
 
-        /// <summary>
-        /// Установка цветов консоли в сочетание цветов <paramref name="preset"/> согласно предустановленной схеме.
-        /// </summary>
+        /// <summary>Установка цветов консоли в сочетание цветов <paramref name="preset"/> согласно предустановленной схеме.</summary>
         /// <param name="preset">Сочетание цветов</param>
         public void SetColor(ColorsPreset preset)
         {
+            ConsoleColor back;
+            ConsoleColor fore;
             switch (preset)
             {
-                case ColorsPreset.Selected:         Console.BackgroundColor = SelectedBackGround;           Console.ForegroundColor = SelectedText;         break;
-                case ColorsPreset.ContextNormal:    Console.BackgroundColor = ContexMenuNormalBackGround;   Console.ForegroundColor = NormalContext;        break;
-                case ColorsPreset.ContextSelected:  Console.BackgroundColor = ContexMenuSelectedBackGround; Console.ForegroundColor = SelectedContext;      break;
-                case ColorsPreset.Standart:         Console.BackgroundColor = ConsoleColor.Black;           Console.ForegroundColor = ConsoleColor.White;   break;
-                case ColorsPreset.Normal: default:  Console.BackgroundColor = NormalBackGround;             Console.ForegroundColor = NormalText;           break;
+                case ColorsPreset.Selected:
+                    back = Colors.SelectedContext;
+                    fore = Colors.SelectedText;
+                    break;
+                case ColorsPreset.ContextNormal:
+                    back = Colors.ContexMenuNormalBackGround;
+                    fore = Colors.NormalContext;
+                    break;
+                case ColorsPreset.ContextSelected:
+                    back = Colors.ContexMenuSelectedBackGround;
+                    fore = Colors.SelectedContext;
+                    break;
+                case ColorsPreset.Standart:
+                    back = ConsoleColor.Black;
+                    fore = ConsoleColor.White;
+                    break;
+                case ColorsPreset.Normal:
+                default:
+                    back = Colors.NormalBackGround;
+                    fore = Colors.NormalText; 
+                    break;
             }
+            Console.BackgroundColor = back;
+            Console.ForegroundColor = fore;
         }
 
-        /// <summary>
-        /// установка курсора консоли внутри фрейма
-        /// </summary>
+        /// <summary>установка курсора консоли внутри фрейма</summary>
         /// <param name="col">столбец</param>
         /// <param name="row">строка</param>
-        public void SetCursorPosition(int col, int row)
-        {
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
-        }
+        public void SetCursorPosition(int col, int row) => Console.SetCursorPosition(col + Geometry.StartCol + 1, row + Geometry.StartRow + 1);
 
-        /// <summary>
-        /// Установка имени <paramref name="str"/> фрейма
-        /// </summary>
+        /// <summary>Установка имени <paramref name="str"/> фрейма</summary>
         /// <param name="str"></param>
-        public void SetName(string str)
-        {
-            if (str.Length < cols - 4)
-            {
-                FrameName = str;
-            }
-            else
-            {
-                string ready = $"{str.Split('\\')[0]}...\\{str.Split('\\')[^1]}";
-                FrameName = ready;
-            }
-        }
+        public void SetName(string str) => FrameName = str.Length < Geometry.cols - 4 ? str : $"{str.Split('\\')[0]}...\\{str.Split('\\')[^1]}";
 
         /// <summary>
         /// Вывод текста <paramref name="str"/> внутри фрейма в столбец начиная с определённой позиции или первого столбца первой строки.
@@ -283,10 +218,10 @@ namespace FileManager
         /// <param name="row">строка</param>
         public void WriteText(string str, int col = 0, int row = 0)
         {
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
-            if (str.Length <= cols)
+            Console.SetCursorPosition(col + Geometry.StartCol + 1, row + Geometry.StartRow + 1);
+            if (str.Length <= Geometry.cols)
             {
-                Console.Write(str.PadRight(cols - 2, ' '));
+                Console.Write(str.PadRight(Geometry.cols - 2, ' '));
             }
             else
             {
@@ -294,15 +229,15 @@ namespace FileManager
                 int lines = 0;
                 do
                 {
-                    Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1 + lines);
-                    for (int i = 0; i < cols - 2 & counter < str.Length; i++, counter++)
+                    Console.SetCursorPosition(col + Geometry.StartCol + 1, row + Geometry.StartRow + 1 + lines);
+                    for (int i = 0; i < Geometry.cols - 2 & counter < str.Length; i++, counter++)
                     {
                         Console.Write(str[counter]);
                     }
                     lines++;
-                } while (counter < str.Length & lines < rows);
+                } while (counter < str.Length & lines < Geometry.rows);
             }
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            Console.SetCursorPosition(col + Geometry.StartCol + 1, row + Geometry.StartRow + 1);
         }
         /// <summary>
         /// Вывод текста <paramref name="str"/> внутри фрейма в строку начиная с определённой позиции или первого столбца первой строки.
@@ -312,18 +247,16 @@ namespace FileManager
         /// <param name="row">строка</param>
         public void WriteTextHorizontal(string str, int col = 0, int row = 0)
         {
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            Console.SetCursorPosition(col + Geometry.StartCol + 1, row + Geometry.StartRow + 1);
             Console.Write(str);
-            Console.SetCursorPosition(col + StartCol + 1, row + StartRow + 1);
+            Console.SetCursorPosition(col + Geometry.StartCol + 1, row + Geometry.StartRow + 1);
         }
 
-        /// <summary>
-        /// Отобразить имя фрейма
-        /// </summary>
+        /// <summary>Отобразить имя фрейма</summary>
         public void WriteName()
         {
-            Console.SetCursorPosition(StartCol + 2, StartRow);
-            Console.Write(FrameName.PadRight(cols - 3, Liner));
+            Console.SetCursorPosition(Geometry.StartCol + 2, Geometry.StartRow);
+            Console.Write(FrameName.PadRight(Geometry.cols - 3, Liner));
         }
 
         public void SetPages(List<Entry> entr)
@@ -331,57 +264,46 @@ namespace FileManager
             Pages = new List<string[]>();
             for (int i = 0, counter = 0; counter < entr.Count; i++)
             {
-                Pages.Add(new string[rows]);
-                for (int j = 0; j < rows-2 & counter < entr.Count; j++, counter++)
+                Pages.Add(new string[Geometry.rows]);
+                for (int j = 0; j < Geometry.rows - 2 & counter < entr.Count; j++, counter++)
                 {
-                    Pages[i][j]=entr[counter].Name;
+                    Pages[i][j] = entr[counter].Name;
                 }
             }
         }
 
-        /// <summary>
-        /// Установка контента фрейма.
-        /// </summary>
+        /// <summary>Установка контента фрейма.</summary>
         /// <param name="liner">строка</param>
         /// <param name="str">Текст</param>
         public void SetContent(int liner, string str)
         {
-            if (liner >= 0 & liner < Content.Length)
-            {
-                Content[liner] = str.PadRight(cols - 2, ' ').Remove(cols - 3);
-            }
+            if (liner >= 0 & liner < Content.Length) Content[liner] = str.PadRight(Geometry.cols - 2, ' ').Remove(Geometry.cols - 3);
         }
 
-        /// <summary>
-        /// Установка контента фрейма.
-        /// </summary>
+        /// <summary>Установка контента фрейма.</summary>
         /// <param name="liner">строка</param>
         /// <param name="str">текст</param>
         public void SetContentHorizontal(int liner, string str)
         {
-            if (liner >= 0 & liner < Content.Length)
-            {
-                Content[liner] = str;
-            }
+            if (liner >= 0 & liner < Content.Length) Content[liner] = str;
         }
 
-        /// <summary>
-        /// Вывод текста страницы <paramref name="page"/> контента фрейма полученного из древа.
-        /// </summary>
+        /// <summary>Вывод текста страницы <paramref name="page"/> контента фрейма полученного из древа.</summary>
         /// <param name="page">номер страницы</param>
         public void ShowContentFromTree(int page)
         {
             int line = 0;
             SetColor(ColorsPreset.Normal);
-            foreach (var item in Pages[page])
-            {
-                WriteText(item, 0, line++);
-            }
+            foreach (var item in Pages[page]) WriteText(item, 0, line++);
+        }
+        public void ShowContent()
+        {
+            int line = 0;
+            SetColor(ColorsPreset.Normal);
+            foreach (var item in Content) WriteText(item, 0, line++);
         }
 
-        /// <summary>
-        /// Получение страниц элементов древа <paramref name="tree"/>
-        /// </summary>
+        /// <summary>Получение страниц элементов древа <paramref name="tree"/></summary>
         /// <param name="tree">Древо элементов</param>
         public void GetContentFromTree(Tree tree)
         {
@@ -397,9 +319,7 @@ namespace FileManager
             }
         }
 
-        /// <summary>
-        /// Метод управления курсором внутри фрейма
-        /// </summary>
+        /// <summary>Метод управления курсором внутри фрейма</summary>
         /// <param name="where">переход</param>
         /// <param name="page">Страница</param>
         /// <param name="index">индекс</param>
@@ -470,14 +390,12 @@ namespace FileManager
             }
         }
 
-        /// <summary>
-        /// Создать новый элемент.
-        /// </summary>
+        /// <summary>Создать новый элемент.</summary>
         /// <param name="page">Страница элементов</param>
         /// <param name="index">Индекс элемента</param>
         public void Create(ref int page, ref int index)
         {
-            Frame question = new Frame(30, 30, 5, 60, "Creating",ColorScheme.BIOS);
+            Frame question = new Frame(30, 30, 5, 60, "Creating", ColorScheme.BIOS);
             question.Show(true);
             question.WriteText($"Create Directory or File? [D/F] ?");
             var q = Console.ReadKey(true);
@@ -487,9 +405,7 @@ namespace FileManager
             index = 0;
         }
 
-        /// <summary>
-        /// Удалить текущий элемент.
-        /// </summary>
+        /// <summary>Удалить текущий элемент.</summary>
         /// <param name="page">Страница элементов</param>
         /// <param name="index">Индекс элемента</param>
         public void Delete(ref int page, ref int index)
@@ -509,13 +425,11 @@ namespace FileManager
             }
         }
 
-        /// <summary>
-        /// Консольный ввод
-        /// </summary>
+        /// <summary>Консольный ввод</summary>
         /// <param name="memory">Список ввода</param>
         public void ConsoleReader(List<string> memory, out bool refresh)
         {
-            Program.WriteLog("Reading command.");
+            Meth.WriteLog("Reading command.");
             StringBuilder consoleReader = new StringBuilder();
             refresh = false;
             bool reader = true;
@@ -574,7 +488,7 @@ namespace FileManager
                         if (!string.IsNullOrEmpty(consoleLine))
                         {
                             memory.Add(consoleLine);
-                            Program.WriteLog("Input command : "+consoleLine);
+                            Meth.WriteLog("Input command : " + consoleLine);
                         }
                         comand.Reader(consoleLine, ref tree, tree.Pages[page][index], out refresh);
                         consoleReader.Clear();
@@ -604,7 +518,40 @@ namespace FileManager
                         break;
                 }
             } while (reader);
-            Program.WriteLog("Reader end.");
+            Meth.WriteLog("Reader end.");
+        }
+    }
+
+    internal record struct Colors(ConsoleColor NormalBackGround, ConsoleColor SelectedBackGround, ConsoleColor NormalText, ConsoleColor SelectedText, ConsoleColor ContexMenuNormalBackGround, ConsoleColor ContexMenuSelectedBackGround, ConsoleColor SelectedContext, ConsoleColor NormalContext)
+    {
+        public static implicit operator (ConsoleColor NormalBackGround,
+            ConsoleColor SelectedBackGround,
+            ConsoleColor NormalText,
+            ConsoleColor SelectedText,
+            ConsoleColor ContexMenuNormalBackGround,
+            ConsoleColor ContexMenuSelectedBackGround,
+            ConsoleColor SelectedContext,
+            ConsoleColor NormalContext)(Colors value)
+        {
+            return (value.NormalBackGround, value.SelectedBackGround, value.NormalText, value.SelectedText, value.ContexMenuNormalBackGround, value.ContexMenuSelectedBackGround, value.SelectedContext, value.NormalContext);
+        }
+
+        public static implicit operator Colors((ConsoleColor NormalBackGround, ConsoleColor SelectedBackGround, ConsoleColor NormalText, ConsoleColor SelectedText, ConsoleColor ContexMenuNormalBackGround, ConsoleColor ContexMenuSelectedBackGround, ConsoleColor SelectedContext, ConsoleColor NormalContext) value)
+        {
+            return new Colors(value.NormalBackGround, value.SelectedBackGround, value.NormalText, value.SelectedText, value.ContexMenuNormalBackGround, value.ContexMenuSelectedBackGround, value.SelectedContext, value.NormalContext);
+        }
+    }
+
+    public record struct Coordinates(int StartCol, int StartRow, int rows, int cols)
+    {
+        public static implicit operator (int StartCol, int StartRow, int rows, int cols)(Coordinates value)
+        {
+            return (value.StartCol, value.StartRow, value.rows, value.cols);
+        }
+
+        public static implicit operator Coordinates((int StartCol, int StartRow, int rows, int cols) value)
+        {
+            return new Coordinates(value.StartCol, value.StartRow, value.rows, value.cols);
         }
     }
 }

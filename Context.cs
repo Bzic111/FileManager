@@ -39,26 +39,27 @@ namespace FileManager
             Show();
             int page = 0;
             int index = 0;
-            
+
             do
             {
                 frame.SetColor(Frame.ColorsPreset.ContextSelected);
-                frame.WriteText(frame.Pages[page][index],0,index);
+                frame.WriteText(frame.Pages[page][index], 0, index);
                 frame.SetColor(Frame.ColorsPreset.ContextNormal);
 
                 switch (Console.ReadKey(true).Key)
                 {
-                    case ConsoleKey.PageDown:       frame.Go(Frame.To.NextPage, ref page, ref index);       break;
-                    case ConsoleKey.PageUp:         frame.Go(Frame.To.PreviousPage, ref page, ref index);   break;
-                    case ConsoleKey.UpArrow:        frame.Go(Frame.To.StepUp, ref page, ref index);         break;
-                    case ConsoleKey.DownArrow:      frame.Go(Frame.To.StepDown, ref page, ref index);       break;
-                    case ConsoleKey.Applications:                                                           break;
+                    case ConsoleKey.PageDown: frame.Go(Frame.To.NextPage, ref page, ref index); break;
+                    case ConsoleKey.PageUp: frame.Go(Frame.To.PreviousPage, ref page, ref index); break;
+                    case ConsoleKey.UpArrow: frame.Go(Frame.To.StepUp, ref page, ref index); break;
+                    case ConsoleKey.DownArrow: frame.Go(Frame.To.StepDown, ref page, ref index); break;
+                    case ConsoleKey.Applications: break;
 
                     case ConsoleKey.LeftArrow:
                     case ConsoleKey.Escape:
-                    default:                        Cycle = false;                                          break;
+                    default: Cycle = false; break;
                 }
             } while (Cycle);
         }
+
     }
 }
