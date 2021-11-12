@@ -78,25 +78,11 @@ namespace FileManager
                 {
                     case ConsoleKey.UpArrow:
                         fr.WriteText(str[index], 0, index);
-                        if (index > 0)
-                        {
-                            index--;
-                        }
-                        else
-                        {
-                            index = str.Count - 1;
-                        }
+                        index = index > 0 ? index - 1 : str.Count - 1;
                         break;
                     case ConsoleKey.DownArrow:
                         fr.WriteText(str[index], 0, index);
-                        if (index < str.Count - 1)
-                        {
-                            index++;
-                        }
-                        else
-                        {
-                            index = 0;
-                        }
+                        index = index < str.Count - 1 ? index + 1 : 0;
                         break;
                     case ConsoleKey.Escape:
                         rootSelectorCycle = false;
