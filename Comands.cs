@@ -5,7 +5,7 @@ class Comands
     public void Reader(string str, ref Tree tree, Entry entry, out bool reFreshFrame)
     {
         //string[] inLine = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        Frame Error = new Frame(30, 30, 5, 40, "Error", Frame.ColorScheme.Warning);
+        Frame Error = new Frame(30, 30, 5, 40, "Error", ColorScheme.Warning);
         reFreshFrame = false;
         string comand = null;
         string path = null;
@@ -169,7 +169,7 @@ class Comands
     }
     public void Delete(Entry entry)
     {
-        Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+        Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
 
         if (entry.type == Entry.Type.Directory)
         {
@@ -208,8 +208,8 @@ class Comands
     }
     public void Create(Entry entry, char type)
     {
-        Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
-        Frame readLine = new Frame(30, 30, 5, 60, "Input Name", Frame.ColorScheme.BIOS);
+        Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
+        Frame readLine = new Frame(30, 30, 5, 60, "Input Name", ColorScheme.BIOS);
 
         string name;
         switch (type)
@@ -217,8 +217,8 @@ class Comands
             case 'D':
             case 'd':
                 readLine.Show(true);
-                readLine.SetColor(Frame.ColorsPreset.ContextNormal);
-                readLine.WriteText("".PadRight(readLine.Geometry.cols - 2, ' '));
+                readLine.SetColor(ColorsPreset.ContextNormal);
+                readLine.WriteText("".PadRight(readLine.Geometry.Cols - 2, ' '));
                 readLine.SetCursorPosition(0, 0);
                 name = Console.ReadLine();
                 if (!Directory.Exists($"{entry.Path}\\{name}"))
@@ -250,8 +250,8 @@ class Comands
             case 'F':
             case 'f':
                 readLine.Show(true);
-                readLine.SetColor(Frame.ColorsPreset.ContextNormal);
-                readLine.WriteText("".PadRight(readLine.Geometry.cols - 2, ' '));
+                readLine.SetColor(ColorsPreset.ContextNormal);
+                readLine.WriteText("".PadRight(readLine.Geometry.Cols - 2, ' '));
                 readLine.SetCursorPosition(0, 0);
                 name = Console.ReadLine();
                 if (!File.Exists($"{entry.Path}\\{name}"))
@@ -285,7 +285,7 @@ class Comands
     }
     public void Move(Entry entry, string destinationPath)
     {
-        Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+        Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
 
         if (entry.type == Entry.Type.Directory)
         {
@@ -323,7 +323,7 @@ class Comands
     }
     void CopyDir(DirectoryInfo source, DirectoryInfo target)
     {
-        Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+        Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
 
         if (source.FullName == target.FullName)
         {
@@ -360,8 +360,8 @@ class Comands
     }
     public void Copy(Entry entry, string destinationPath)
     {
-        Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
-        Frame question = new Frame(30, 30, 5, 60, "Overwrite?");
+        Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
+        Frame question = new Frame((30, 30, 5, 60), "Overwrite?", ColorScheme.Warning);
         bool overwrite = false;
 
         if (entry.type == Entry.Type.File)

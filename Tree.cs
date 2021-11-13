@@ -7,38 +7,26 @@ using System.Collections;
 using System.Collections.Generic;
 namespace FileManager
 {
-    /// <summary>
-    /// Класс для хранения информации о файлах и каталогах в списках.
-    /// </summary>
+    /// <summary>Класс для хранения информации о файлах и каталогах в списках.</summary>
     [Serializable]
     public class Tree
     {
-        /// <summary>
-        /// Отсортированный список файлов и каталогов
-        /// </summary>
+        /// <summary>Отсортированный список файлов и каталогов</summary>
         public List<Entry> Entryes;
 
-        /// <summary>
-        /// Список файлов и каталогов по страницам
-        /// </summary>
+        /// <summary>Список файлов и каталогов по страницам</summary>
         public List<List<Entry>> Pages;
 
-        /// <summary>
-        /// Текущая директория
-        /// </summary>
+        /// <summary>Текущая директория</summary>
         public string CurrentPath;
 
-        /// <summary>
-        /// Список дисков
-        /// </summary>
+        /// <summary>Список дисков</summary>
         public List<string> Roots { get; private set; }
 
 
         public Tree() => SetRoots();
 
-        /// <summary>
-        /// Сбор информации о текущих подключенный дисках
-        /// </summary>
+        /// <summary>Сбор информации о текущих подключенный дисках</summary>
         public void SetRoots()
         {
             List<string> drives = new List<string>();
@@ -53,9 +41,7 @@ namespace FileManager
             Meth.WriteLog("Get Drives for new tree.");
         }
 
-        /// <summary>
-        /// Сбор списка файлов и каталогов в директории <paramref name="path"/>
-        /// </summary>
+        /// <summary>Сбор списка файлов и каталогов в директории <paramref name="path"/></summary>
         /// <param name="path"></param>
         void GetEntryList(string path)
         {
@@ -84,7 +70,7 @@ namespace FileManager
             }
             catch (UnauthorizedAccessException e)
             {
-                Frame Error = new Frame(30, 30, 5, e.Message.Length + 2, "Acces Denied", Frame.ColorScheme.Warning);
+                Frame Error = new Frame(30, 30, 5, e.Message.Length + 2, "Acces Denied", ColorScheme.Warning);
                 Error.Show(true);
                 Error.WriteText(e.Message);
                 Meth.WriteLog("Acces to " + path + " is denied");
@@ -93,7 +79,7 @@ namespace FileManager
             }
             catch (Exception e)
             {
-                Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
                 warn.Show(true);
                 warn.WriteText(e.Message);
                 Meth.WriteLog(e.Message);
@@ -135,7 +121,7 @@ namespace FileManager
         /// <param name="path">путь</param>
         public void ChangeDirectory(string path)
         {
-            Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+            Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
             if (string.IsNullOrEmpty(path))
             {
                 warn.Show(true);

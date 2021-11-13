@@ -16,7 +16,7 @@ public static class Meth
         {
             frame.SetContentHorizontal(liner, Pager[liner++].Name.PadRight(11, ' ').Remove(10));
         }
-        frame.SetColor(Frame.ColorsPreset.Normal);
+        frame.SetColor(ColorsPreset.Normal);
         foreach (var item in frame.Content)
         {
             frame.WriteTextHorizontal(item, count * 10, 0);
@@ -25,9 +25,9 @@ public static class Meth
         count = 0;
         do
         {
-            frame.SetColor(Frame.ColorsPreset.Selected);
+            frame.SetColor(ColorsPreset.Selected);
             frame.WriteTextHorizontal(frame.Content[count], count * 10, 0);
-            frame.SetColor(Frame.ColorsPreset.Normal);
+            frame.SetColor(ColorsPreset.Normal);
             var key = Console.ReadKey(true);
             switch (key.Key)
             {
@@ -121,7 +121,7 @@ public static class Meth
             }
             catch (Exception e)
             {
-                Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
                 warn.Show(true);
                 warn.WriteText(e.Message);
                 Console.ReadKey(true);
@@ -139,7 +139,7 @@ public static class Meth
             }
             catch (Exception e)
             {
-                Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
                 warn.Show(true);
                 warn.WriteText(e.Message);
                 Console.ReadKey(true);
@@ -158,7 +158,7 @@ public static class Meth
             }
             catch (Exception e)
             {
-                Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+                Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
                 warn.Show(true);
                 warn.WriteText(e.Message);
                 Console.ReadKey(true);
@@ -169,7 +169,7 @@ public static class Meth
         Console.ResetColor();
         Console.CursorVisible = true;
     }
-    public static void ContextMenu(int col, int row, Entry entry, Frame.ColorScheme scheme = Frame.ColorScheme.Default)
+    public static void ContextMenu(int col, int row, Entry entry, ColorScheme scheme = ColorScheme.Default)
     {
         Comands cmd = new Comands();
         Frame mfr = new Frame(col + 2, row + 1, 5, 12, "Action", scheme);
@@ -180,13 +180,13 @@ public static class Meth
         mfr.SetContent(2, "Copy to");
         mfr.SetContent(3, "Move to");
 
-        mfr.Show(true, false, Frame.ColorsPreset.ContextNormal);
+        mfr.Show(true, false, ColorsPreset.ContextNormal);
         bool cmc = true;
         do
         {
-            mfr.SetColor(Frame.ColorsPreset.ContextSelected);
+            mfr.SetColor(ColorsPreset.ContextSelected);
             mfr.WriteText(mfr.Content[index], 0, index);
-            mfr.SetColor(Frame.ColorsPreset.ContextNormal);
+            mfr.SetColor(ColorsPreset.ContextNormal);
             var c = Console.ReadKey(true);
             switch (c.Key)
             {
@@ -194,20 +194,20 @@ public static class Meth
                     switch (index)
                     {
                         case 0:
-                            Frame creator = new Frame(30, 30, 5, 60, "Creating", Frame.ColorScheme.BIOS);
+                            Frame creator = new Frame(30, 30, 5, 60, "Creating", ColorScheme.BIOS);
                             creator.Show(true);
                             creator.WriteText($"Create Directory or File? [D/F] ?");
                             var q = Console.ReadKey(true);
                             cmd.Create(entry, q.KeyChar);
                             break;
                         case 1:
-                            Frame deletor = new Frame(30, 30, 5, 60, "Deleting", Frame.ColorScheme.BIOS);
+                            Frame deletor = new Frame(30, 30, 5, 60, "Deleting", ColorScheme.BIOS);
                             deletor.Show(true);
                             deletor.WriteText($"Delete {entry.Name} Y/N ?");
                             if (Console.ReadKey(true).Key == ConsoleKey.Y) cmd.Delete(entry);
                             break;
                         case 2:
-                            Frame copyer = new Frame(30, 30, 5, 70, "Copy to", Frame.ColorScheme.BIOS);
+                            Frame copyer = new Frame(30, 30, 5, 70, "Copy to", ColorScheme.BIOS);
                             copyer.Show(true);
                             copyer.WriteText($"Input destination path");
                             copyer.SetCursorPosition(0, 1);

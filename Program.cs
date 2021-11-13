@@ -2,6 +2,10 @@
 global using System.IO;
 global using FileManager;
 global using System.Collections.Generic;
+global using FileManager;
+global using FileManager.Interfaces;
+global using FileManager.Extensions;
+global using FileManager.Base;
 using System.Xml.Serialization;
 using System.Text;
 using System.Diagnostics;
@@ -9,11 +13,14 @@ using System.Collections;
 using System.Text.Json;
 using System.Windows;
 
+
+
+
 Meth.WriteLog("\tStart Program.");
 List<Tab> Tabs = new List<Tab>();
 List<string> ComMemory = new List<string>();
 Frame info = new Frame(30, 10, 20, 40);
-Frame context = new Frame(0, 0, 25, 40, "Context", Frame.ColorScheme.Default);
+Frame context = new Frame(0, 0, 25, 40, "Context", ColorScheme.Default);
 
 bool clear = false;
 bool Cycle = true;
@@ -30,14 +37,18 @@ if (File.Exists("test.xml"))
     try
     {
         Meth.WriteLog("Try load test.xml");
-        FileStream fs = new FileStream("test.xml", FileMode.Open);
-        Tabs = (List<Tab>)xmls.Deserialize(fs);
-        fs.Close();
+        using (FileStream fs = new FileStream("test.xml", FileMode.Open, FileAccess.Read))
+        {
+            Tabs = (List<Tab>)xmls.Deserialize(fs)!;
+        }
         Meth.WriteLog("Last state readed from test.xml");
+        //FileStream fs = new FileStream("test.xml", FileMode.Open,FileAccess.Read);
+        //Tabs = (List<Tab>)xmls.Deserialize(fs)!;
+        //fs.Close();
     }
     catch (Exception e)
     {
-        Frame warn = new Frame(30, 30, 5, 60, "Error", Frame.ColorScheme.Warning);
+        Frame warn = new Frame(30, 30, 5, 60, "Error", ColorScheme.Warning);
         warn.Show(true);
         warn.WriteText(e.Message);
         Console.ReadKey(true);
@@ -53,12 +64,12 @@ else
     Tabs.Add(new Tab(true));
 }
 
-info.Coloring(Frame.ColorScheme.BIOS);
+info.Coloring(ColorScheme.BIOS);
 info.SetName("Information");
 Console.ResetColor();
 Console.Clear();
 
-Tabs[tabIndexer].WorkFrame.Coloring(Frame.ColorScheme.Default);
+Tabs[tabIndexer].WorkFrame.Coloring(ColorScheme.Default);
 Tabs[tabIndexer].WorkFrame.SetName(Tabs[tabIndexer].WorkFrame.tree.Roots[0] + $"Page {page + 1}/{Tabs[tabIndexer].WorkFrame.tree.Pages.Count}");
 Tabs[tabIndexer].WorkFrame.GetContentFromTree(Tabs[tabIndexer].WorkFrame.tree);
 Tabs[tabIndexer].WorkFrame.Show(content: true);
@@ -70,22 +81,22 @@ do
 
     Tabs[tabIndexer].WorkFrame.SetName($"╣{Tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Parent} | Page {page + 1}/{Tabs[tabIndexer].WorkFrame.tree.Pages.Count}╠");
     Tabs[tabIndexer].WorkFrame.WriteName();
-    Tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Selected);
+    Tabs[tabIndexer].WorkFrame.SetColor(ColorsPreset.Selected);
     Tabs[tabIndexer].WorkFrame.WriteText(Tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Name, 0, index);
-    Tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
+    Tabs[tabIndexer].WorkFrame.SetColor(ColorsPreset.Normal);
 
     var key = Console.ReadKey();
     switch (key.Key)
     {
         case ConsoleKey.Escape: Cycle = false; clear = false; break;
-        case ConsoleKey.Backspace: Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepBack, ref page, ref index); break;
-        case ConsoleKey.Enter: Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepForward, ref page, ref index); break;
-        case ConsoleKey.PageUp: Tabs[tabIndexer].WorkFrame.Go(Frame.To.NextPage, ref page, ref index); break;
-        case ConsoleKey.PageDown: Tabs[tabIndexer].WorkFrame.Go(Frame.To.PreviousPage, ref page, ref index); break;
-        case ConsoleKey.End: Tabs[tabIndexer].WorkFrame.Go(Frame.To.LastPage, ref page, ref index); break;
-        case ConsoleKey.Home: Tabs[tabIndexer].WorkFrame.Go(Frame.To.FirstPage, ref page, ref index); break;
-        case ConsoleKey.UpArrow: Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepUp, ref page, ref index); break;
-        case ConsoleKey.DownArrow: Tabs[tabIndexer].WorkFrame.Go(Frame.To.StepDown, ref page, ref index); break;
+        case ConsoleKey.Backspace: Tabs[tabIndexer].WorkFrame.Go(To.StepBack, ref page, ref index); break;
+        case ConsoleKey.Enter: Tabs[tabIndexer].WorkFrame.Go(To.StepForward, ref page, ref index); break;
+        case ConsoleKey.PageUp: Tabs[tabIndexer].WorkFrame.Go(To.NextPage, ref page, ref index); break;
+        case ConsoleKey.PageDown: Tabs[tabIndexer].WorkFrame.Go(To.PreviousPage, ref page, ref index); break;
+        case ConsoleKey.End: Tabs[tabIndexer].WorkFrame.Go(To.LastPage, ref page, ref index); break;
+        case ConsoleKey.Home: Tabs[tabIndexer].WorkFrame.Go(To.FirstPage, ref page, ref index); break;
+        case ConsoleKey.UpArrow: Tabs[tabIndexer].WorkFrame.Go(To.StepUp, ref page, ref index); break;
+        case ConsoleKey.DownArrow: Tabs[tabIndexer].WorkFrame.Go(To.StepDown, ref page, ref index); break;
 
         case ConsoleKey.Insert: Tabs[tabIndexer].WorkFrame.Create(ref page, ref index); break;
         case ConsoleKey.Delete: Tabs[tabIndexer].WorkFrame.Delete(ref page, ref index); break;
@@ -99,7 +110,7 @@ do
         case ConsoleKey.LeftArrow:
             context.tree.ChangeDirectory(Tabs[tabIndexer].WorkFrame.tree.Pages[page][index].Path);
             context.GetContentFromTree(context.tree);
-            context.Show(true, true, Frame.ColorsPreset.ContextNormal);
+            context.Show(true, true, ColorsPreset.ContextNormal);
             bool contextCycle = true;
             do
             {
@@ -116,6 +127,7 @@ do
         Tabs[tabIndexer].WorkFrame.tree.ReFresh();
         Tabs[tabIndexer].WorkFrame.Refresh(true, page);
     }
-    Tabs[tabIndexer].WorkFrame.SetColor(Frame.ColorsPreset.Normal);
+    Tabs[tabIndexer].WorkFrame.SetColor(ColorsPreset.Normal);
 } while (Cycle);
+
 Meth.Exit(Tabs, ref index, ref page, ref tabIndexer, clear);
