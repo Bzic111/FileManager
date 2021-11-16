@@ -1,4 +1,4 @@
-﻿namespace FileManager;
+﻿namespace FileManager.Internal;
 
 internal record struct SymbolBorder(char LeftUpCorner, char LeftDownCorner, char RightUpCorner, char RightDownCorner, char Liner, char Border)
 {

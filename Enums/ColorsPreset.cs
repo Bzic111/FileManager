@@ -1,4 +1,4 @@
-﻿namespace FileManager;
+﻿namespace FileManager.Enums;
 /// <summary>Предустановленные цветовые сочетания</summary>
 public enum ColorsPreset
 {

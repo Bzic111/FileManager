@@ -5,8 +5,10 @@ using System.Text;
 using System.Text.Json;
 using System.Collections;
 using System.Collections.Generic;
+using FileManager.Internal;
+using FileManager.Enums;
 
-namespace FileManager;
+namespace FileManager.Old;
 /// <summary>Фрейм.</summary>
 [Serializable]
 public partial class Frame
@@ -70,7 +72,7 @@ public partial class Frame
         }
         Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow + Geometry.Rows);
         Console.Write($"{Symbols.LeftDownCorner}".PadRight(Geometry.Cols - 1, Symbols.Liner) + Symbols.RightDownCorner);
-    }    
+    }
     /// <summary>Отображение фрейма в консоль</summary>
     /// <param name="clear">Очистить область</param><param name="content">Вывести контент</param><param name="preset">Сочетания цветов</param>
     public void Show(bool clear = false, bool content = false, ColorsPreset preset = ColorsPreset.Normal)
@@ -467,7 +469,7 @@ public partial class Frame
                     Console.SetCursorPosition(consoleLine.Length + cursorStartCol, 43);
                     break;
                 default:
-                    if ((sub.KeyChar >= '\u0020' & sub.KeyChar <= '\u007A') | (sub.KeyChar >= '\u0430' & sub.KeyChar <= '\u044F'))
+                    if (sub.KeyChar >= '\u0020' & sub.KeyChar <= '\u007A' | sub.KeyChar >= '\u0430' & sub.KeyChar <= '\u044F')
                     {
                         consoleReader.Append(sub.KeyChar);
                         consoleLine = consoleReader.ToString();

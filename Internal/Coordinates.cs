@@ -1,4 +1,4 @@
-﻿namespace FileManager;
+﻿namespace FileManager.Internal;
 
 /// <summary>Координаты фрейма</summary>
 /// <param name="StartCol">Стартовый столбец</param>

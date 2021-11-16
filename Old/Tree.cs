@@ -5,7 +5,9 @@ using System.Text;
 using System.Text.Json;
 using System.Collections;
 using System.Collections.Generic;
-namespace FileManager
+using FileManager.Enums;
+
+namespace FileManager.Old
 {
     /// <summary>Класс для хранения информации о файлах и каталогах в списках.</summary>
     [Serializable]

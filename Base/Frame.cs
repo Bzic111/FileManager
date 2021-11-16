@@ -1,19 +1,21 @@
-﻿using System;
+﻿using FileManager.Internal;
+using System.Text;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
 namespace FileManager.Base;
-internal class Frame : IFrame
+public class Frame : IFrame
 {
     public Coordinates Geometry { get; private set; }
-    private SymbolBorder Symbols { get; set; }
+    private SymbolBorder _symbols { get; set; }
     public string Name { get; private set; }
     public string[] Content { get; set; }
 
     private Frame()
     {
-        Symbols = (LeftUpCorner: '╔', LeftDownCorner: '╚', RightUpCorner: '╗', RightDownCorner: '╝', Liner: '═', Border: '║');
+        _symbols = (LeftUpCorner: '╔', LeftDownCorner: '╚', RightUpCorner: '╗', RightDownCorner: '╝', Liner: '═', Border: '║');
     }
     private Frame(Coordinates geometry) : this()
     {
@@ -54,29 +56,28 @@ internal class Frame : IFrame
         }
     }
     public void SetName(string name) => Name = name;
-    public void Show()
+    public void Show(bool name = true)
     {
         if (Console.WindowWidth < Geometry.StartCol && Console.WindowHeight < Geometry.StartRow + Geometry.Rows + 8)
-        {
             Console.SetWindowSize(Geometry.StartCol + Geometry.Cols + 1, Geometry.StartRow + Geometry.Rows + 8);
-        }
         Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow);
-        Console.Write($"{Symbols.LeftUpCorner}".PadRight(Geometry.Cols - 1, Symbols.Liner) + Symbols.RightUpCorner);
-        WriteName();
+        Console.Write($"{_symbols.LeftUpCorner}".PadRight(Geometry.Cols - 1, _symbols.Liner) + _symbols.RightUpCorner);
+        if (name)
+            WriteName();
         for (int i = 1; i < Geometry.Rows; i++)
         {
             Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow + i);
-            Console.Write(Symbols.Border);
+            Console.Write(_symbols.Border);
             Console.SetCursorPosition(Geometry.StartCol + Geometry.Cols - 1, Geometry.StartRow + i);
-            Console.Write($"{Symbols.Border}");
+            Console.Write($"{_symbols.Border}");
         }
         Console.SetCursorPosition(Geometry.StartCol, Geometry.StartRow + Geometry.Rows);
-        Console.Write($"{Symbols.LeftDownCorner}".PadRight(Geometry.Cols - 1, Symbols.Liner) + Symbols.RightDownCorner);
+        Console.Write($"{_symbols.LeftDownCorner}".PadRight(Geometry.Cols - 1, _symbols.Liner) + _symbols.RightDownCorner);
     }
     private void WriteName()
     {
         Console.SetCursorPosition(Geometry.StartCol + 2, Geometry.StartRow);
-        Console.Write(Name.PadRight(Geometry.Cols - 3, Symbols.Liner));
+        Console.Write(Name.PadRight(Geometry.Cols - 3, _symbols.Liner));
     }
     public void Clear()
     {

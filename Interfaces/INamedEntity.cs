@@ -1,8 +1,6 @@
-﻿namespace FileManager.Interfaces
+﻿namespace FileManager.Interfaces;
+public interface INamedEntity
 {
-    public interface INamedEntity
-    {
-        /// <summary>Имя</summary>
-        public string Name { get; }
-    }
+    /// <summary>Имя</summary>
+    public string Name { get; }
 }

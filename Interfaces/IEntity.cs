@@ -1,7 +1,5 @@
-﻿namespace FileManager.Interfaces
+﻿namespace FileManager.Interfaces;
+public interface IEntity
 {
-    public interface IEntity
-    {
-        int Id { get; set; }
-    }
+    int Id { get; set; }
 }

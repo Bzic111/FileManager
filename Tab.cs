@@ -1,89 +1,41 @@
-﻿
-namespace FileManager;
-/// <summary>Класс для формирования вкладки</summary>
-[Serializable]
-public class Tab
+﻿class Tab<T> : ITab<T> where T : IFrame, IControlable
 {
-    public string Name;
-    public int Page = 0;
-    public int index = 0;
-    public Frame WorkFrame;
+    private string[] _head { get => new string[] { "╔══════════╗", $"║{Name}║", "╩══════════╩" }; }
+    public int Id { get; set; }
+    public Coordinates Geometry { get; private set; }
+    public T Content { get; private set; }
+    public string Name { get; set; }
+    //private SymbolBorder _symbols { get; set; }
 
-    public Tab()
+    private Tab(string name) => Name = UseAsName(name);
+    private Tab(string name, T frame) : this(name) => Content = frame;
+    public Tab(T frame) : this(frame.Geometry, frame) { }
+    public Tab(Coordinates geometry, T frame) : this(frame.Name, frame)
     {
-
+        Geometry = geometry;
+        Content.Move(2, 0);
     }
-    public Tab(bool newTab = true)
-    {
-        if (newTab)
-        {
-            WorkFrame = new Frame(0, 0, 41, 150, "Tab", ColorScheme.Default);
-            WorkFrame.tree = new Tree();
 
-            Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count + 1, 10, "Drive", ColorScheme.BIOS);
-            for (int i = 0; i < WorkFrame.tree.Roots.Count; i++) fr.SetContent(i, WorkFrame.tree.Roots[i]);
-            WorkFrame.tree.ChangeDirectory(RootSelect(WorkFrame.tree.Roots, fr));
-            Name = WorkFrame.tree.Pages[0][0].Name;
+    public void SetName() => Name = Content != null ? UseAsName(Content.Name) : "noname";
+    public void SetName(string name) => Name = UseAsName(name);
+    public void SetContent(T frame) => Content = frame;
+    public void ShowHead()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            Console.SetCursorPosition((Id * _head[0].Length) + 1, i);
+            Console.Write(_head[i]);
         }
     }
-    public Tab(string path, bool newTab = true)
+    public void Show()
     {
-        if (newTab)
+        if (Console.WindowWidth <= Geometry.StartCol + Geometry.Cols && Console.WindowHeight <= Geometry.StartRow + Geometry.Rows + 8)
         {
-            WorkFrame = new Frame(0, 0, 41, 150);
-            WorkFrame.tree = new Tree();
-            Frame fr = new Frame(30, 10, WorkFrame.tree.Roots.Count, 10);
-            for (int i = 0; i < WorkFrame.tree.Roots.Count; i++)
-            {
-                fr.SetContent(i, WorkFrame.tree.Roots[i]);
-            }
-            WorkFrame.tree.ChangeDirectory(RootSelect(WorkFrame.tree.Roots, fr));
+            Console.SetWindowSize(Geometry.StartCol + Geometry.Cols + 1, Geometry.StartRow + Geometry.Rows + 8);
         }
-        else
-        {
-            WorkFrame.tree.ChangeDirectory(path);
-            for (int i = 0; i < WorkFrame.tree.Pages[0].Count; i++)
-            {
-                WorkFrame.SetContent(i, WorkFrame.tree.Pages[0][i].Name);
-            }
-        }
+        Content.Show(false);
+        ShowHead();
     }
 
-    /// <summary>Выбор диска.</summary>
-    /// <param name="str">Список дисков</param>
-    /// <param name="fr">Фрейм для заполнения</param>
-    /// <returns></returns>
-    string RootSelect(List<string> str, Frame fr)
-    {
-        bool rootSelectorCycle = true;
-        int index = 0;
-        fr.Show(true, false, ColorsPreset.Normal);
-        fr.ShowContent();
-        do
-        {
-            fr.SetColor(ColorsPreset.Selected);
-            fr.WriteText(str[index], 0, index);
-            fr.SetColor(ColorsPreset.Normal);
-            var K = Console.ReadKey(true);
-
-            switch (K.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    fr.WriteText(str[index], 0, index);
-                    index = index > 0 ? index - 1 : str.Count - 1;
-                    break;
-                case ConsoleKey.DownArrow:
-                    fr.WriteText(str[index], 0, index);
-                    index = index < str.Count - 1 ? index + 1 : 0;
-                    break;
-                case ConsoleKey.Escape:
-                    rootSelectorCycle = false;
-                    break;
-                case ConsoleKey.Enter:
-                    return str[index];
-                default: break;
-            }
-        } while (rootSelectorCycle);
-        return null;
-    }
+    private static string UseAsName(string str) => str.Length >= 10 ? $"{str.Remove(9)}~" : $"{str.PadRight(9, '_')}~";
 }

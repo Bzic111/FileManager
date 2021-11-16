@@ -1,8 +1,9 @@
-﻿using System;
+﻿using FileManager.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileManager
+namespace FileManager.Old
 {
     class Context
     {

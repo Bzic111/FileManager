@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace FileManager
+namespace FileManager.Old
 {
     [Serializable]
     public class Entry
@@ -54,15 +54,15 @@ namespace FileManager
                 }
                 else if (temp < Kbyte)
                 {
-                    Size = (Math.Round((float)temp / (float)Kbyte), 2).ToString() + " Kb";
+                    Size = (Math.Round(temp / (float)Kbyte), 2).ToString() + " Kb";
                 }
                 else if (temp < Mbyte)
                 {
-                    Size = (Math.Round((float)temp / (float)Mbyte), 2).ToString() + " Mb";
+                    Size = (Math.Round(temp / (float)Mbyte), 2).ToString() + " Mb";
                 }
                 else if (temp < Gbyte)
                 {
-                    Size = (Math.Round((float)temp / (float)Gbyte), 2).ToString() + " Gb";
+                    Size = (Math.Round(temp / (float)Gbyte), 2).ToString() + " Gb";
                 }
             }
             else if (type == Type.Directory)

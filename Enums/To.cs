@@ -1,4 +1,4 @@
-﻿namespace FileManager;
+﻿namespace FileManager.Enums;
 /// <summary>Ключи для переходов внутри списка дерева</summary>
 public enum To
 {

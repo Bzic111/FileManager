@@ -1,11 +1,13 @@
 ﻿global using System;
 global using System.IO;
-global using FileManager;
 global using System.Collections.Generic;
 global using FileManager;
 global using FileManager.Interfaces;
-global using FileManager.Extensions;
+global using FileManager.Internal;
 global using FileManager.Base;
+global using FileManager.Enums;
+global using FileManager.Extensions;
+
 using System.Xml.Serialization;
 using System.Text;
 using System.Diagnostics;
@@ -13,14 +15,11 @@ using System.Collections;
 using System.Text.Json;
 using System.Windows;
 
-
-
-
 Meth.WriteLog("\tStart Program.");
 List<Tab> Tabs = new List<Tab>();
 List<string> ComMemory = new List<string>();
-Frame info = new Frame(30, 10, 20, 40);
-Frame context = new Frame(0, 0, 25, 40, "Context", ColorScheme.Default);
+Frame info = new Frame((30, 10, 20, 40), "Info");
+Frame context = new Frame((0, 0, 25, 40), "Context");
 
 bool clear = false;
 bool Cycle = true;

@@ -1,4 +1,4 @@
-﻿namespace FileManager;
+﻿namespace FileManager.Enums;
 /// <summary>Цветовая схема</summary>
 public enum ColorScheme
 {

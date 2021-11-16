@@ -1,4 +1,7 @@
-﻿namespace FileManager;
+﻿using FileManager.Enums;
+using FileManager.Old;
+
+namespace FileManager;
 class Comands
 {
     Log logger = new Log();

@@ -1,4 +1,6 @@
-﻿[Serializable]
+﻿using FileManager.Old;
+
+[Serializable]
 public class LastState
 {
     public List<Tab> Tabs;
