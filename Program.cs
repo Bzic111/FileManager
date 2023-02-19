@@ -26,7 +26,7 @@ namespace FileManager
     }
     class Program
     {
-        static string LogFile = $"Log_{DateTime.Now}.txt";
+        static string LogFile = $"Log_{DateTime.Now.Date.ToShortDateString()}.txt";
         static public List<Tab> Tabs;
         static List<string> ComMemory = new List<string>();
 

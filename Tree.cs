@@ -7,48 +7,32 @@ using System.Collections;
 using System.Collections.Generic;
 namespace FileManager
 {
-    /// <summary>
-    /// Класс для хранения информации о файлах и каталогах в списках.
-    /// </summary>
+    /// <summary>Класс для хранения информации о файлах и каталогах в списках.</summary>
     [Serializable]
     public class Tree
     {
-        /// <summary>
-        /// Отсортированный список файлов и каталогов
-        /// </summary>
+        /// <summary>Отсортированный список файлов и каталогов</summary>
         public List<Entry> Entryes;
 
-        /// <summary>
-        /// Список файлов и каталогов по страницам
-        /// </summary>
+        /// <summary>Список файлов и каталогов по страницам</summary>
         public List<List<Entry>> Pages;
 
-        /// <summary>
-        /// Текущая директория
-        /// </summary>
+        /// <summary>Текущая директория</summary>
         public string CurrentPath;
 
-        /// <summary>
-        /// Список дисков
-        /// </summary>
+        /// <summary>Список дисков</summary>
         public List<string> Roots { get; private set; }
 
 
         public Tree() => SetRoots();
 
-        /// <summary>
-        /// Сбор информации о текущих подключенный дисках
-        /// </summary>
+        /// <summary>Сбор информации о текущих подключенный дисках</summary>
         public void SetRoots()
         {
             List<string> drives = new List<string>();
-            for (char c = 'A'; c < 'Z'; c++)
-            {
-                if (Directory.Exists(c.ToString() + ":\\"))
-                {
-                    drives.Add(c.ToString() + ":\\");
-                }
-            }
+            foreach (var item in DriveInfo.GetDrives())
+                drives.Add(item.Name);
+
             Roots = drives;
             Program.WriteLog("Get Drives for new tree.");
         }
@@ -120,9 +104,7 @@ namespace FileManager
             Pages = pages;
         }
 
-        /// <summary>
-        /// Обновление данных директории
-        /// </summary>
+        /// <summary>Обновление данных директории</summary>
         public void ReFresh()
         {
             GetEntryList(CurrentPath);
