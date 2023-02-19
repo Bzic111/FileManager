@@ -19,7 +19,7 @@ public interface IFrame
     /// <summary>Очистить фрейм</summary>
     public void Clear();
     /// <summary>Обновить фрейм</summary>
-    public void Refresh() { Show(); Clear(); }
+    public void Refresh();// { Show(); Clear(); }
 
     void FillContent(string str, int index)
     {

@@ -95,4 +95,10 @@ public class Frame : IFrame
             Console.Write(Content[i]);
         }
     }
+
+    public void Refresh()
+    {
+        Show();
+        Clear();
+    }
 }

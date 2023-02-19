@@ -12,7 +12,7 @@ public interface ITab<T>
     public void ShowHead();
     /// <summary>Задатть имя вкладки</summary><param name="name"></param>
     public void SetName(string name);
-    /// <summary>Задатть имя вкладки</summary>
+    /// <summary>Задать имя вкладки</summary>
     public void SetName();
 
 }
